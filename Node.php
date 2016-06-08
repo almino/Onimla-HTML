@@ -65,18 +65,17 @@ class Node {
 
     public function __get($name) {
         self::log("Using magical method to GET a child named `{$name}`.", TRUE);
-        
+
         if (array_key_exists($name, $this->children)) {
             return $this->children[$name];
         }
-        
+
         $trace = debug_backtrace();
         trigger_error(
-            'Undefined property via __get(): ' . $name .
-            ' in ' . $trace[0]['file'] .
-            ' on line ' . $trace[0]['line'],
-            E_USER_NOTICE);
-        
+                'Undefined property via __get(): ' . $name .
+                ' in ' . $trace[0]['file'] .
+                ' on line ' . $trace[0]['line'], E_USER_NOTICE);
+
         return FALSE;
     }
 
@@ -235,9 +234,9 @@ class Node {
                 # Remove o filho do array
                 unset($this->children[$key]);
 
-                self::log("\"{$c->path()}\" REMOVED from \"{$this->path()}\"");
+                self::log((is_object($c) AND method_exists($c, 'path') ? "\"{$c->path()}\"" : "`{$c}`") . ' REMOVED from `' . get_class($this) . '`');
             } else {
-                self::log("\"{$c->path()}\" NOT FOUND in {$this->path()}\"");
+                self::log((is_object($c) AND method_exists($c, 'path') ? "\"{$c->path()}\"" : "`{$c}`") . ' NOT FOUND in `' . get_class($this) . '`');
             }
 
             # Procura nos netos
@@ -446,7 +445,7 @@ class Node {
      * @return array
      */
     public static function arrayFlatten($array, $preserve_keys = 0, &$newArray = Array()) {
-        foreach ($array as $key => $child) {
+        foreach (new \ArrayIterator($array) as $key => $child) {
             if ($child instanceof \stdClass) {
                 $child = (array) $child;
             }
@@ -510,7 +509,7 @@ class Node {
             if (!file_exists($destination)) {
                 mkdir($dir, 0755, TRUE);
             }
-            
+
             return error_log($timestamp . $caller . trim($message) . PHP_EOL, 3, $destination);
             #return file_put_contents($filename, $message, FILE_APPEND);
         } else {
