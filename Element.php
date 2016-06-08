@@ -218,16 +218,16 @@ class Element extends Node implements HasAttribute, Appendable {
 
     /**
      * 
-     * @return boolean|Attribute\Klass
+     * @return Attribute\Klass
      */
     public function getClassAttribute() {
         $attrName = 'class';
 
-        if (key_exists($attrName, $this->attr)) {
-            return $this->attr[$attrName];
+        if (!key_exists($attrName, $this->attr)) {
+            $this->attr(new Attribute\Klass());
         }
 
-        return FALSE;
+        return $this->attr[$attrName];
     }
 
     /**
@@ -265,7 +265,7 @@ class Element extends Node implements HasAttribute, Appendable {
 
         return $this;
     }
-    
+
     public function hasClass($class) {
         return $this->getClassAttribute()->matchValue($class);
     }
