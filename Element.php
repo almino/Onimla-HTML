@@ -220,7 +220,7 @@ class Element extends Node implements HasAttribute, Appendable {
      * 
      * @return boolean|Attribute\Klass
      */
-    public function getClass() {
+    public function getClassAttribute() {
         $attrName = 'class';
 
         if (key_exists($attrName, $this->attr)) {
@@ -266,8 +266,8 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this;
     }
     
-    public function isClass($class) {
-        return $this->getClass()->matchValue($class);
+    public function hasClass($class) {
+        return $this->getClassAttribute()->matchValue($class);
     }
 
     public function aria($property, $value = FALSE, $convert = 'encode') {
