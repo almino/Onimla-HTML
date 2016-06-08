@@ -1,0 +1,15 @@
+{
+    "name": "onimla/html",
+    "description": "PHP classes to generate HTML in a jQuery way",
+    "authors": [
+        {
+            "name": "Almino Melo",
+            "email": "almino.melo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Onimla\\HTML\\": "."
+        }
+    }
+}
