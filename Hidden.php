@@ -7,7 +7,7 @@ namespace Onimla\HTML;
 class Hidden extends Input {
 
     public function __construct($name, $value = FALSE, $attr = NULL) {
-        parent::__construct($name, 'hidden', $value, $attr);
+        parent::__construct($name, $value, 'hidden', $attr);
     }
 
 }
