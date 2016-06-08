@@ -136,6 +136,14 @@ class Attribute {
 
         return preg_match($regexOrstring, $this->getValue(TRUE));
     }
+    
+    /**
+     * Return if the value is set.
+     * @return boolean
+     */
+    public function isValue() {
+        return strlen($this->getValue()) > 0;
+    }
 
     public function getOutput() {
         return $this->output;
