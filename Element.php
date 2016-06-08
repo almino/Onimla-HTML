@@ -265,6 +265,10 @@ class Element extends Node implements HasAttribute, Appendable {
 
         return $this;
     }
+    
+    public function isClass($class) {
+        return $this->getClass()->matchValue($class);
+    }
 
     public function aria($property, $value = FALSE, $convert = 'encode') {
         return $this->attr('aria-' . $property, $value, $convert);

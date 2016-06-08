@@ -130,7 +130,7 @@ class Attribute {
     }
 
     public function matchValue($regexOrstring) {
-        if (@preg_match($regexOrstring, null) === false) {
+        if (@preg_match($regexOrstring, NULL) === FALSE) {
             $regexOrstring = "/" . preg_quote($regexOrstring) . "/";
         }
 
