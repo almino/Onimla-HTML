@@ -3,12 +3,12 @@
 namespace Onimla\HTML\Attribute;
 
 /*
-require_once implode(DIRECTORY_SEPARATOR, array(
-            substr(__DIR__, 0, strpos(__DIR__, 'Onimla') + 6),
-            'HTML',
-            'Attribute.class.php',
-        ));
-*/
+  require_once implode(DIRECTORY_SEPARATOR, array(
+  substr(__DIR__, 0, strpos(__DIR__, 'Onimla') + 6),
+  'HTML',
+  'Attribute.class.php',
+  ));
+ */
 
 /**
  * Type attribute for an HTML Input.
@@ -29,10 +29,15 @@ class Identifier extends \Onimla\HTML\Attribute {
         return parent::getValue($output);
     }
 
+    public function setUniqueValue($prefix = '', $more_entropy = FALSE) {
+        $this->setValue(uniqid($prefix, $more_entropy));
+        return $this;
+    }
+
     public static function safeValue($value) {
         return preg_replace('/[^\w\d\-]/', '', $value);
     }
-    
+
     public function selector() {
         return '#' . $this->getValue();
     }

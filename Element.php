@@ -323,7 +323,6 @@ class Element extends Node implements HasAttribute, Appendable {
     }
 
     /**
-     * (PHP 4, PHP 5)<br/>
      * Generate a unique ID attribute for an HTML Element
      * @link http://php.net/manual/en/function.uniqid.php
      * @param string $prefix [optional] <p>
@@ -345,7 +344,8 @@ class Element extends Node implements HasAttribute, Appendable {
      * @return Element method chaining
      */
     public function uniqid($prefix = '', $more_entropy = FALSE) {
-        return $this->id(uniqid($prefix, $more_entropy));
+        $this->id()->setUniqueValue($prefix, $more_entropy);
+        return $this;
     }
 
     function role($value = FALSE, $output = 'safe') {
