@@ -141,7 +141,7 @@ class Attribute {
      * Return if the value is set.
      * @return boolean
      */
-    public function isValue() {
+    public function isValueSet() {
         return strlen($this->getValue()) > 0;
     }
 
