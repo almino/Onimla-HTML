@@ -344,8 +344,9 @@ class Element extends Node implements HasAttribute, Appendable {
      * @return Element method chaining
      */
     public function uniqid($prefix = '', $more_entropy = FALSE) {
-        $this->id()->setUniqueValue($prefix, $more_entropy);
-        return $this;
+        $id = new Attribute\Identifier();
+        $id->setUniqueValue($prefix, $more_entropy);
+        return $this->attr($id);
     }
 
     function role($value = FALSE, $output = 'safe') {

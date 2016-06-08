@@ -16,7 +16,7 @@ class Datalist extends Element {
     }
 
     public function options($children) {
-        require_once 'Option.class.php';
+        #require_once 'Option.class.php';
         foreach (self::arrayFlatten(func_get_args()) as $child) {
             if (is_string($child)) {
                 $this->append(new Option($child));
