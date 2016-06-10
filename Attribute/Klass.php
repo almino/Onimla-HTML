@@ -56,7 +56,7 @@ class Klass extends \Onimla\HTML\Attribute {
     }
 
     public function getValue($output = TRUE) {
-        $values = array_filter(array_unique($this->value), 'strlen');
+        $values = array_filter($this->value, 'strlen');
 
         if ($output === TRUE) {
             return implode(' ', array_map(array(__CLASS__, 'safeValue'), $values));
