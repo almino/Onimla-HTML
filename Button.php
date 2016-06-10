@@ -6,9 +6,10 @@ namespace Onimla\HTML;
 
 class Button extends Element {
 
-    function __construct($type = 'button') {
+    function __construct($text = FALSE, $type = 'button') {
         parent::__construct('button');
         $this->type($type);
+        $this->text($text);
     }
 
     /**
