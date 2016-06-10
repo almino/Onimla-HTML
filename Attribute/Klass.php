@@ -55,6 +55,11 @@ class Klass extends \Onimla\HTML\Attribute {
         return \Onimla\HTML\Node::arrayFlatten($values);
     }
 
+    public static function outputValue($value) {
+        $values = array_filter(\Onimla\HTML\Node::arrayFlatten(func_get_args()), 'strlen');
+        return implode(' ', array_map(array(__CLASS__, 'safeValue'), $values));
+    }
+
     public function getValue($output = TRUE) {
         $values = array_filter($this->value, 'strlen');
 
@@ -87,6 +92,7 @@ class Klass extends \Onimla\HTML\Attribute {
             if (count($this->value) < 1) {
                 $this->append($class);
             } else {
+                self::log("Adding `{$class}` to the begining of the array", TRUE);
                 # Coloca o parâmetro no início do array
                 array_unshift($this->value, $class);
                 # !!! Não precisa reatribuir $this->value
@@ -97,15 +103,19 @@ class Klass extends \Onimla\HTML\Attribute {
     }
 
     public function append($class) {
+        self::log("Adding `{$class}` to the eng of the array", TRUE);
         return call_user_func_array(array($this, 'addValue'), func_get_args());
     }
 
     public function before($class, $classes) {
+        self::log("Adding classes before `{$class}`", TRUE);
+
         $newClasses = func_get_args();
         # Remove o primeiro parâmetro passado para a função
         array_shift($newClasses);
         # Garante que não há várias dimensões no array
         $newClasses = call_user_func_array(array($this, 'prepValue'), $newClasses);
+        self::log('Classes before to be added: .' . implode('.', $newClasses));
 
         $tmp = array_values($this->value);
 
@@ -160,6 +170,22 @@ class Klass extends \Onimla\HTML\Attribute {
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * WARNING! This will reset / rewrite all of your classes.
+     * Remove $class if they appear in the same exact order.
+     * @param string $class as many as you want
+     * @return \Onimla\HTML\Attribute\Klass
+     */
+    public function strictRemoveClass($class) {
+        $remove = call_user_func_array(array(__CLASS__, 'outputValue'), func_get_args());
+        $current = $this->getValue();
+        var_dump($current);
+        
+        $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
+        
         return $this;
     }
 
