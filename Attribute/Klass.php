@@ -182,7 +182,6 @@ class Klass extends \Onimla\HTML\Attribute {
     public function strictRemoveClass($class) {
         $remove = call_user_func_array(array(__CLASS__, 'outputValue'), func_get_args());
         $current = $this->getValue();
-        var_dump($current);
         
         $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
         
