@@ -52,7 +52,7 @@ class Klass extends \Onimla\HTML\Attribute {
             return $val;
         });
 
-        return \Onimla\HTML\Node::arrayFlatten($values);
+        return array_filter(\Onimla\HTML\Node::arrayFlatten($values), 'strlen');
     }
 
     public static function outputValue($value) {
