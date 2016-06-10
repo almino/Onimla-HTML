@@ -116,6 +116,10 @@ class Klass extends \Onimla\HTML\Attribute {
         # Garante que não há várias dimensões no array
         $newClasses = call_user_func_array(array($this, 'prepValue'), $newClasses);
         self::log('Classes before to be added: .' . implode('.', $newClasses));
+        
+        if (count($newClasses) < 1) {
+            return $this;
+        }
 
         $tmp = array_values($this->value);
 
@@ -141,6 +145,10 @@ class Klass extends \Onimla\HTML\Attribute {
         array_shift($newClasses);
         # Garante que não há várias dimensões no array
         $newClasses = call_user_func_array(array($this, 'prepValue'), $newClasses);
+        
+        if (count($newClasses) < 1) {
+            return $this;
+        }
 
         $tmp = array_values($this->value);
 
