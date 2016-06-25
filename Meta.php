@@ -9,6 +9,7 @@ class Meta extends Element {
     function __construct($content = FALSE) {
         parent::__construct('meta');
         $this->content($content);
+        $this->selfClose(TRUE);
     }
 
     function httpEquiv($value = FALSE) {
