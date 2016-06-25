@@ -6,28 +6,33 @@ namespace Onimla\HTML;
 
 class Meta extends Element {
 
-    function __construct($http_equiv = 'Content-Type', $content = 'text/html;charset=UTF-8') {
+    function __construct($content = FALSE) {
         parent::__construct('meta');
-        $this->http_equiv($http_equiv);
         $this->content($content);
     }
 
-    function http_equiv($http_equiv = NULL) {
-        if (!empty($http_equiv)) {
-            $this->attr('http-equiv', $http_equiv);
+    function httpEquiv($value = FALSE) {
+        $attrName = 'http-equiv';
+
+        if ($value === FALSE) {
+            return $this->attr($attrName);
         }
 
-        return $this->attr('http-equiv');
+        $this->attr(new Attribute($attrName, $value));
+
+        return $this;
     }
 
-    function content($content = NULL) {
-        if (!empty($content)) {
-            $this->attr('content', $content);
+    function content($value = FALSE) {
+        $attrName = 'content';
+
+        if ($value === FALSE) {
+            return $this->attr($attrName);
         }
 
-        return $this->attr('content');
+        $this->attr(new Attribute($attrName, $value));
+
+        return $this;
     }
 
 }
-
-?>
