@@ -41,6 +41,7 @@ class Node {
     const TAB = "  ";
 
     public function __construct($children = FALSE) {
+        /*
         # Default enviroment is development
         if (!defined('ENVIROMENT')) {
             define('ENVIROMENT', 'development');
@@ -49,6 +50,7 @@ class Node {
         # Log actions on a development enviroment
         self::$log = (ENVIRONMENT !== 'production');
         #$this->indentSource = (ENVIRONMENT !== 'production');
+        */
 
         self::log('Created new instance of `' . get_class($this) . '`.', TRUE);
 
