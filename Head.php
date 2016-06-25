@@ -16,13 +16,13 @@ class Head extends Element {
         );
         $this->append(
                 (new Meta())
-                        ->content('ie=edge')
                         ->httpEquiv('x-ua-compatible')
+                        ->content('ie=edge')
         );
         $this->append(
                 (new Meta())
-                        ->content('width=device-width, initial-scale=1')
                         ->attr(new Attribute('name', 'viewport'))
+                        ->content('width=device-width, initial-scale=1')
         );
 
         $this->title($title);
