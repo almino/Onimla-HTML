@@ -18,7 +18,9 @@ class Template extends Node {
     public function __construct($children = FALSE) {
         parent::__construct();
 
-        call_user_func_array(array($this->body(), 'append'), func_get_args());
+        if (func_num_args() > 0) {
+            call_user_func_array(array($this->body(), 'append'), func_get_args());
+        }
     }
 
     public function __toString() {
@@ -27,10 +29,10 @@ class Template extends Node {
 
     public function __get($name) {
         if (!isset($this->$name) AND method_exists($this, $name)) {
-            call_user_func(array($this, $name));
+            return call_user_func(array($this, $name));
         }
 
-        parent::__get($name);
+        return parent::__get($name);
     }
 
     public function html($instance = FALSE) {
@@ -83,6 +85,11 @@ class Template extends Node {
 
         $this->body = $instance;
 
+        return $this;
+    }
+
+    public function append($children) {
+        call_user_func_array(array($this->body, 'append'), func_get_args());
         return $this;
     }
 
