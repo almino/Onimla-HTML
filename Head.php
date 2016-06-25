@@ -15,11 +15,13 @@ class Head extends Element {
                         ->attr(new Attribute('charset', $this->charset))
         );
         $this->append(
-                (new Meta('ie=edge'))
+                (new Meta())
+                        ->content('ie=edge')
                         ->httpEquiv('x-ua-compatible')
         );
         $this->append(
-                (new Meta('width=device-width, initial-scale=1'))
+                (new Meta())
+                        ->content('width=device-width, initial-scale=1')
                         ->attr(new Attribute('name', 'viewport'))
         );
 
