@@ -15,8 +15,10 @@ class Attribute {
     static $log = FALSE;
 
     public function __construct($name = FALSE, $value = FALSE) {
+        /*
         # Log actions on a development enviroment
         self::$log = (ENVIRONMENT !== 'production');
+        */
 
         if ($name !== FALSE) {
             $this->setName($name);
