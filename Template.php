@@ -69,9 +69,9 @@ class Template extends Node {
     }
 
     public function title($text = FALSE) {
-        $this->head->title($text);
+        $this->head()->title($text);
 
-        return ($text === FALSE) ? $this->head->title() : $this;
+        return ($text === FALSE) ? $this->head()->title() : $this;
     }
 
     public function body($instance = FALSE) {
