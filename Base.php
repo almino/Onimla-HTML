@@ -9,6 +9,7 @@ class Base extends Element {
     public function __construct($href = FALSE) {
         parent::__construct('base');
         $this->href($href);
+        $this->selfClose(TRUE);
     }
 
 }
