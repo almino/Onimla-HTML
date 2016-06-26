@@ -5,6 +5,8 @@ namespace Onimla\HTML;
 #require_once 'Element.class.php';
 
 class Anchor extends Element {
+    
+    use Traits\Href;
 
     public function __construct($text = FALSE, $href = FALSE, $title = FALSE) {
         parent::__construct('a');
@@ -12,10 +14,6 @@ class Anchor extends Element {
         $this->title($title);
         $this->selfClose(FALSE);
         $this->text($text);
-    }
-
-    public function href($url = FALSE) {
-        return $this->attr(__FUNCTION__, $url);
     }
 
 }
