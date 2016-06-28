@@ -89,7 +89,7 @@ class Template extends Node {
     }
 
     public function append($children) {
-        call_user_func_array(array($this->body, __FUNCTION__), func_get_args());
+        call_user_func_array(array($this->body(), __FUNCTION__), func_get_args());
         return $this;
     }
 
