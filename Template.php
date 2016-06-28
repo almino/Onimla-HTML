@@ -19,7 +19,7 @@ class Template extends Node {
         parent::__construct();
 
         if (func_num_args() > 0) {
-            call_user_func_array(array($this->body(), 'append'), func_get_args());
+            call_user_func_array(array($this, 'append'), func_get_args());
         }
     }
 
@@ -89,7 +89,7 @@ class Template extends Node {
     }
 
     public function append($children) {
-        call_user_func_array(array($this->body, 'append'), func_get_args());
+        call_user_func_array(array($this->body, __FUNCTION__), func_get_args());
         return $this;
     }
 
