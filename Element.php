@@ -141,7 +141,7 @@ class Element extends Node implements HasAttribute, Appendable {
      * @param string $name
      * @return boolean|Attribute
      */
-    protected function getAttr($name) {
+    public function getAttribute($name) {
         self::log('Asking for an attribute\'s value.');
         # Garantindo que o nome não tenha caracteres especiais
         $name = Attribute::name($name);
@@ -154,6 +154,33 @@ class Element extends Node implements HasAttribute, Appendable {
 
         self::log("Attribute `{$name}` NOT found.");
         return FALSE;
+    }
+
+    public function getAttributeValue($name) {
+        if (!key_exists($name, $this->attr)) {
+            return FALSE;
+        }
+
+        return $this->getAttribute($name)->getValue();
+    }
+
+    public function getAttributeVal($name) {
+        return $this->getAttributeValue($name);
+    }
+
+    public function setAttributeValue($name, $value, $output = FALSE) {
+        self::log('Setting an attribute\'s value with a string.');
+        $attr = new Attribute($name, $value);
+        self::log('Attribute successfuly created.', TRUE);
+        $attr->setOutput($output);
+        self::log('Output set.', TRUE);
+        $this->attr[$attr->getName()] = $attr;
+
+        return $this;
+    }
+
+    public function addAttribute(Attribute $attr) {
+        $this->attr[$attr->getName()] = $attr;
     }
 
     /**
@@ -175,28 +202,26 @@ class Element extends Node implements HasAttribute, Appendable {
 
         # Está pedindo um atributo
         if (func_num_args() == 1 AND $param1) {
-            return $this->getAttr($name);
+            return $this->getAttributeValue($name);
         } elseif ((func_num_args() == 2 OR func_num_args() == 3) AND ( $param1 AND $param2)) {
             if ($param2 === FALSE) {
                 self::log('Second parameter is FALSE.');
-                return $this->getAttr($name);
+                return $this->getAttributeValue($name);
             }
 
-            self::log('Setting an attribute\'s value with a string.');
-            $attr = new Attribute($name, $value);
-            self::log('Attribute successfuly created.', TRUE);
-            $attr->setOutput($output);
-            self::log('Output set.', TRUE);
-            $this->attr[$attr->getName()] = $attr;
+            $this->setAttributeValue($name, $value, $output);
         } elseif ((func_num_args() == 2 OR func_num_args() == 3) AND ( $param1 AND $value instanceof Attribute)) {
             self::log('Setting an attribute\'s value with an object.');
-            $attr = new Attribute($name, $value->getValue());
-            $attr->setOutput($output);
-            $this->attr[$attr->getName()] = $attr;
+            $this->setAttributeValue($name, $value->getValue(), $output);
+            /*
+              $attr = new Attribute($name, $value->getValue());
+              $attr->setOutput($output);
+              $this->attr[$attr->getName()] = $attr;
+             */
         } else {
             self::log('All of them are objects.', TRUE);
             foreach (self::arrayFlatten(func_get_args()) as $attr) {
-                $this->attr[$attr->getName()] = $attr;
+                $this->addAttribute($attr);
             }
         }
 
@@ -227,7 +252,7 @@ class Element extends Node implements HasAttribute, Appendable {
             $this->attr(new Attribute\Klass());
         }
 
-        return $this->attr[$attrName];
+        return $this->getAttribute($attrName);
     }
 
     /**
@@ -257,7 +282,7 @@ class Element extends Node implements HasAttribute, Appendable {
     public function removeClass($class) {
         #require_once 'Attribute/Klass.class.php';
 
-        $attr = $this->getAttr('class');
+        $attr = $this->getAttribute('class');
 
         if ($attr !== FALSE AND $attr instanceof Attribute\Klass) {
             call_user_func_array(array($attr, __FUNCTION__), func_get_args());
@@ -318,7 +343,7 @@ class Element extends Node implements HasAttribute, Appendable {
         $attrName = __FUNCTION__;
 
         if ($value === FALSE) {
-            return $this->getAttr($attrName);
+            return $this->getAttribute($attrName);
         }
 
         #require_once 'Attribute/Identifier.class.php';
