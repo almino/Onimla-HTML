@@ -16,9 +16,9 @@ class Attribute {
 
     public function __construct($name = FALSE, $value = FALSE) {
         /*
-        # Log actions on a development enviroment
-        self::$log = (ENVIRONMENT !== 'production');
-        */
+          # Log actions on a development enviroment
+          self::$log = (ENVIRONMENT !== 'production');
+         */
 
         if ($name !== FALSE) {
             $this->setName($name);
@@ -138,7 +138,21 @@ class Attribute {
 
         return preg_match($regexOrstring, $this->getValue(TRUE));
     }
-    
+
+    public function value($value = FALSE) {
+        if ($value === FALSE) {
+            return $this->getValue();
+        }
+
+        $this->setValue($value);
+
+        return $this;
+    }
+
+    public function val($value = FALSE) {
+        return $this->val($value);
+    }
+
     /**
      * Return if the value is set.
      * @return boolean
