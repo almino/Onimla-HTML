@@ -162,5 +162,9 @@ class Input extends Element {
 
         return $this->attr(__FUNCTION__, $value);
     }
+    
+    public function isValueSet() {
+        return $this->getAttribute('value')->isValueSet();
+    }
 
 }
