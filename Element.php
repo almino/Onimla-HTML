@@ -787,8 +787,8 @@ class Element extends Node implements HasAttribute, Appendable {
         self::log("Looking for [{$attr}=\"{$value}\"]");
 
         # Garantindo que o nome não tenha caracteres especiais
-        $attr = self::removeSpecialCharacters(
-                        self::convertAccentedCharacters(strtolower($attr)));
+        $attr = Attribute::removeSpecialCharacters(
+                        Attribute::convertAccentedCharacters(strtolower($attr)));
 
 
         $path = "{$this->path()}[{$attr}=\"{$value}\"]";
