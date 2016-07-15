@@ -51,7 +51,11 @@ class Select extends Element {
     }
 
     public function name($value = FALSE) {
-        return $this->attr('name', $value, 'safe');
+        if ($value === FALSE) {
+            return $this->getAttribute(__FUNCTION__);
+        }
+        
+        return $this->setAttributeValue(__FUNCTION__, $value, 'safe');
     }
 
     public function required($set = TRUE) {
