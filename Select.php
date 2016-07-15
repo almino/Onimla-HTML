@@ -3,8 +3,8 @@
 namespace Onimla\HTML;
 
 /*
-require_once 'Element.class.php';
-require_once 'Option.class.php';
+  require_once 'Element.class.php';
+  require_once 'Option.class.php';
  */
 
 class Select extends Element {
@@ -18,7 +18,7 @@ class Select extends Element {
         $this->name($name);
         $this->selfClose(FALSE);
         if ($options !== FALSE) {
-            $this->append($options);
+            $this->appendOptions($options);
         }
     }
 
@@ -54,7 +54,7 @@ class Select extends Element {
         if ($value === FALSE) {
             return $this->getAttribute(__FUNCTION__);
         }
-        
+
         return $this->setAttributeValue(__FUNCTION__, $value, 'safe');
     }
 
@@ -75,14 +75,13 @@ class Select extends Element {
 
         return $this;
     }
-    
+
     public function value($value = FALSE) {
         $found = $this->findByAttr('selected', 'selected');
-        
+
         if (is_object($found) AND method_exists($found, 'attr')) {
             return $found->attr('value') === FALSE ? $found->text() : $found->attr('value');
         }
-        
     }
 
     public function firstOption($text = FALSE) {
@@ -103,17 +102,17 @@ class Select extends Element {
         return $this->append(new Option($value, $text));
     }
 
-    public function appendOptions($array, $ignore_indexes = TRUE) {
+    public function appendOptions($array, $ignoreIndexes = TRUE) {
         foreach ($array as $value => $text) {
-            $option = new Option(FALSE, $text);
-            
-            if (!$ignore_indexes) {
-                $option->value($value);
+            $option = $text instanceof Element ? $text : new Option(FALSE, $text);
+
+            if (!$ignoreIndexes) {
+                $option->attr('value', $value);
             }
 
             $this->append($option);
         }
-        
+
         return $this;
     }
 
