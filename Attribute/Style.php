@@ -14,13 +14,11 @@ class Style extends Attribute {
 
     protected $value = array();
 
-    public function __construct() {
+    public function __construct($class = FALSE) {
         parent::__construct('style');
-        /*
           if (func_num_args() > 0) {
           call_user_func_array(array($this, 'addValue'), func_get_args());
           }
-         */
     }
 
     public function getValue($output = TRUE) {

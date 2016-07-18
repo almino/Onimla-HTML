@@ -305,7 +305,8 @@ class Element extends Node implements HasAttribute, Appendable {
         $attrName = 'style';
 
         if (!key_exists($attrName, $this->attr)) {
-            $this->attr[$attrName] = new Attribute\Style();
+            $this->attr[$attrName] = new Attribute\Style(...func_get_args());
+            return $this;
         }
 
         call_user_func_array(array($this->attr[$attrName], 'addValue'), func_get_args());
