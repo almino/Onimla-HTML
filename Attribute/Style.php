@@ -2,19 +2,14 @@
 
 namespace Onimla\HTML\Attribute;
 
-/*
-require_once implode(DIRECTORY_SEPARATOR, array(
-            substr(__DIR__, 0, strpos(__DIR__, 'Onimla') + 11),
-            'Attribute.class.php',
-        ));
- */
+use Onimla\HTML\Attribute;
 
 /**
  * CSS's style attribute for an HTML element.
  *
  * @author AlminoMelo at gmail.com
  */
-class Style extends \Onimla\HTML\Attribute {
+class Style extends Attribute {
 
     protected $value = array();
 
@@ -33,7 +28,7 @@ class Style extends \Onimla\HTML\Attribute {
         if (is_array($value)) {
             $this->value = $value;
         } else {
-            $this->value = self::value($value);
+            $this->value = self::prepValue($value);
         }
     }
 
@@ -43,7 +38,7 @@ class Style extends \Onimla\HTML\Attribute {
             $declarations = $this->arrayFlatten(func_get_args(), 1);
         } elseif (is_string($property) AND $value === FALSE) {
             # Supondo que toda a regra venha no primero parâmetro da função
-            $declarations = self::value($property);
+            $declarations = self::prepValue($property);
         } else {
             # Caso venha somente uma regra, transforma em array
             $declarations = array($property => $value);
@@ -52,7 +47,7 @@ class Style extends \Onimla\HTML\Attribute {
         $this->value = array_merge($this->value, $declarations);
     }
     
-    public static function value($value) {
+    public static function prepValue($value) {
         # Quebra a string
         $declarations = explode(';', $value);
         
