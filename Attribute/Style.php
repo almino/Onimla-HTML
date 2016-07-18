@@ -17,14 +17,24 @@ class Style extends Attribute {
     public function __construct() {
         parent::__construct('style');
         /*
-        if (func_num_args() > 0) {
-            call_user_func_array(array($this, 'addValue'), func_get_args());
-        }
+          if (func_num_args() > 0) {
+          call_user_func_array(array($this, 'addValue'), func_get_args());
+          }
          */
     }
 
     public function getValue($output = TRUE) {
-        return implode('; ', $this->value);
+        if ($output !== TRUE) {
+            return parent::getValue($output);
+        }
+
+        $result = '';
+
+        foreach ($this->value as $class => $value) {
+            $result = "{$class}: $value; ";
+        }
+
+        return trim($result);
     }
 
     public function setValue($value) {
@@ -46,21 +56,21 @@ class Style extends Attribute {
             # Caso venha somente uma regra, transforma em array
             $declarations = array($property => $value);
         }
-        
+
         $this->value = array_merge($this->value, $declarations);
     }
-    
+
     public static function prepValue($value) {
         # Quebra a string
         $declarations = explode(';', $value);
-        
+
         $result = array();
-        
+
         foreach ($declarations as $declaration) {
             list($property, $value) = explode(':', $declaration);
             $result[$property] = $value;
         }
-        
+
         return $result;
     }
 
