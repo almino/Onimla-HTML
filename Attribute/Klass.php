@@ -2,12 +2,7 @@
 
 namespace Onimla\HTML\Attribute;
 
-/*
-  require_once implode(DIRECTORY_SEPARATOR, array(
-  substr(__DIR__, 0, strpos(__DIR__, 'Onimla') + 11),
-  'Attribute.class.php',
-  ));
- */
+use Onimla\HTML\Node;
 
 /**
  * Class attribute for an HTML element.
@@ -171,7 +166,7 @@ class Klass extends \Onimla\HTML\Attribute {
     }
 
     public function removeClass($class) {
-        foreach (\Onimla\HTML\Node::arrayFlatten(func_get_args()) as $class) {
+        foreach (Node::arrayFlatten(func_get_args()) as $class) {
             $key = array_search($class, $this->value);
             if ($key !== FALSE) {
                 unset($this->value[$key]);
@@ -194,6 +189,14 @@ class Klass extends \Onimla\HTML\Attribute {
         $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
         
         return $this;
+    }
+    
+    public function hasAny() {
+        $matches = array();
+        
+        preg_match_all('/' . preg_quote(implode('|', Node::arrayFlatten(func_get_args()))) . '/', $this->getValue(), $matches);
+        
+        return $matches[0];
     }
 
     public static function safeValue($value) {
