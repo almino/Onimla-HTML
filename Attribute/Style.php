@@ -3,6 +3,7 @@
 namespace Onimla\HTML\Attribute;
 
 use Onimla\HTML\Attribute;
+use Onimla\HTML\Element;
 
 /**
  * CSS's style attribute for an HTML element.
@@ -35,7 +36,7 @@ class Style extends Attribute {
     public function addValue($property, $value = FALSE) {
         if (is_array($property)) {
             # Garante que o array só tem uma dimensão
-            $declarations = $this->arrayFlatten(func_get_args(), 1);
+            $declarations = Element::arrayFlatten(func_get_args(), 1);
         } elseif (is_string($property) AND $value === FALSE) {
             # Supondo que toda a regra venha no primero parâmetro da função
             $declarations = self::prepValue($property);
