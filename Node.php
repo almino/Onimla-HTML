@@ -2,12 +2,14 @@
 
 namespace Onimla\HTML;
 
+use Countable;
+
 /**
  * An HTML node.
  *
  * @author AlminoMelo at gmail.com
  */
-class Node {
+class Node implements Countable {
 
     /**
      * String to put before the instance string
@@ -124,6 +126,10 @@ class Node {
 
     public function countChildren() {
         return call_user_func_array(array($this, 'length'), func_get_args());
+    }
+    
+    public function count() {
+        return $this->length();
     }
 
     public function getChildren() {
