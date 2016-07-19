@@ -191,7 +191,12 @@ class Klass extends \Onimla\HTML\Attribute {
         return $this;
     }
     
-    public function hasAny() {
+    /**
+     * Return classes that matches the parameters
+     * @param string $classes as many as you want
+     * @return string could be more than one class
+     */
+    public function hasAny($classes) {
         $matches = array();
         
         preg_match_all('/' . preg_quote(implode('|', Node::arrayFlatten(func_get_args()))) . '/', $this->getValue(), $matches);
