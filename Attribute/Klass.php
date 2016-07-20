@@ -198,8 +198,9 @@ class Klass extends \Onimla\HTML\Attribute {
      */
     public function hasAny($classes) {
         $matches = array();
+        $classes = array_map('preg_quote', Node::arrayFlatten(func_get_args()));
         
-        preg_match_all('/' . preg_quote(implode('|', Node::arrayFlatten(func_get_args()))) . '/', $this->getValue(), $matches);
+        preg_match_all('/' . implode('|', $classes) . '/', $this->getValue(), $matches);
         
         return $matches[0];
     }
