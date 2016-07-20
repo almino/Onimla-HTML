@@ -3,13 +3,14 @@
 namespace Onimla\HTML;
 
 use Countable;
+use Serializable;
 
 /**
  * An HTML node.
  *
  * @author AlminoMelo at gmail.com
  */
-class Node implements Countable {
+class Node implements Countable, Serializable {
 
     /**
      * String to put before the instance string
@@ -104,6 +105,22 @@ class Node implements Countable {
         $glue = $this->indentSource ? $this->after . PHP_EOL . $this->before : "{$this->after}{$this->before}";
 
         return $this->before . implode($glue, $this->children) . $this->after;
+    }
+    
+    public function serialize() {
+        return serialize(array(
+            $this->before,
+            $this->after,
+            $this->children,
+        ));
+    }
+    
+    public function unserialize($serialized) {
+        list(
+            $this->before,
+            $this->after,
+            $this->children,
+        ) = unserialize($serialized);
     }
 
     /**

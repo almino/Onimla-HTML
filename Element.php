@@ -69,6 +69,32 @@ class Element extends Node implements HasAttribute, Appendable {
         return strlen($this->text());
     }
 
+    public function serialize() {
+        return serialize(array(
+            $this->before,
+            $this->after,
+            $this->children,
+            $this->parent,
+            $this->name,
+            $this->attr,
+            $this->selfClose,
+            $this->commentSelector,
+        ));
+    }
+    
+    public function unserialize($serialized) {
+        list(
+            $this->before,
+            $this->after,
+            $this->children,
+            $this->parent,
+            $this->name,
+            $this->attr,
+            $this->selfClose,
+            $this->commentSelector,
+        ) = unserialize($serialized);
+    }
+
     /**
      * Retunrs a string like parent > element#id.class.classes
      * @return string
