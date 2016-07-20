@@ -11,14 +11,6 @@ class Form extends Element {
         $this->action($action);
         $this->method($method);
         $this->selfClose(FALSE);
-
-        if (function_exists('get_instance')
-                AND property_exists(get_instance(), 'security')
-                AND method_exists(get_instance()->security, 'get_csrf_hash')
-                AND get_instance()->security->get_csrf_hash()) {
-            #require_once 'CrossSiteRequestForgery.class.php';
-            $this->append(new CrossSiteRequestForgery());
-        }
     }
 
     public function action($url = FALSE) {
