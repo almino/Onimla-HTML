@@ -6,7 +6,7 @@ use Onimla\HTML\Attribute;
 
 class Input extends Element {
 
-    public function __construct($name, $value = FALSE, $type = 'text', $attr = FALSE) {
+    public function __construct($name = FALSE, $value = FALSE, $type = 'text', $attr = FALSE) {
         parent::__construct('input', $attr);
         $this->type($type);
         $this->name($name);
