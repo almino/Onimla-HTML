@@ -45,15 +45,15 @@ class Node implements Countable, Serializable {
 
     public function __construct($children = FALSE) {
         /*
-        # Default enviroment is development
-        if (!defined('ENVIROMENT')) {
-            define('ENVIROMENT', 'development');
-        }
+          # Default enviroment is development
+          if (!defined('ENVIROMENT')) {
+          define('ENVIROMENT', 'development');
+          }
 
-        # Log actions on a development enviroment
-        self::$log = (ENVIRONMENT !== 'production');
-        #$this->indentSource = (ENVIRONMENT !== 'production');
-        */
+          # Log actions on a development enviroment
+          self::$log = (ENVIRONMENT !== 'production');
+          #$this->indentSource = (ENVIRONMENT !== 'production');
+         */
 
         self::log('Created new instance of `' . get_class($this) . '`.', TRUE);
 
@@ -106,7 +106,7 @@ class Node implements Countable, Serializable {
 
         return $this->before . implode($glue, $this->children) . $this->after;
     }
-    
+
     public function serialize() {
         return serialize(array(
             $this->before,
@@ -114,13 +114,13 @@ class Node implements Countable, Serializable {
             $this->children,
         ));
     }
-    
+
     public function unserialize($serialized) {
         list(
-            $this->before,
-            $this->after,
-            $this->children,
-        ) = unserialize($serialized);
+                $this->before,
+                $this->after,
+                $this->children,
+                ) = unserialize($serialized);
     }
 
     /**
@@ -144,7 +144,7 @@ class Node implements Countable, Serializable {
     public function countChildren() {
         return call_user_func_array(array($this, 'length'), func_get_args());
     }
-    
+
     public function count() {
         return $this->length();
     }
@@ -451,10 +451,10 @@ class Node implements Countable, Serializable {
         array_shift($param_arr);
 
         foreach ($this->children as &$child) {
-            if (is_callable($callableOrMethod)) {
-                $callableOrMethod($child);
-            } elseif (method_exists($child, $method)) {
+            if (method_exists($child, $callableOrMethod)) {
                 call_user_func_array(array($child, $callableOrMethod), $param_arr);
+            } elseif (is_callable($callableOrMethod)) {
+                $callableOrMethod($child);
             }
         }
 
