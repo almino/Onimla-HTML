@@ -2,7 +2,7 @@
 
 namespace Onimla\HTML;
 
-#require_once 'Element.class.php';
+use Onimla\HTML\Attribute;
 
 class Input extends Element {
 
@@ -64,23 +64,23 @@ class Input extends Element {
 
     public function name($value = FALSE) {
         if ($value === FALSE) {
-            return $this->attr(__FUNCTION__);
+            return $this->getAttribute(__FUNCTION__);
         }
 
-        /*
-          require_once implode(DIRECTORY_SEPARATOR, array(
-          substr(__DIR__, 0, strpos(__DIR__, 'Onimla') + 6),
-          'HTML',
-          'Attribute.class.php',
-          ));
-         */
-
-        $attr = new \Onimla\HTML\Attribute(__FUNCTION__, $value);
+        $attr = new Attribute(__FUNCTION__, $value);
         $attr->setOutput('safe');
 
         $this->attr($attr);
 
         return $this;
+    }
+
+    public function placeholder($value = FALSE) {
+        if ($value === FALSE) {
+            return $this->getAttributeValue(__FUNCTION__);
+        }
+
+        return $this->setAttributeValue(__FUNCTION__, $value, 'html');
     }
 
     public function readOnly() {
@@ -157,12 +157,12 @@ class Input extends Element {
      */
     public function value($value = FALSE) {
         if ($value === FALSE) {
-            return $this->attr(__FUNCTION__);
+            return $this->getAttributeValue(__FUNCTION__);
         }
 
-        return $this->attr(__FUNCTION__, $value);
+        return $this->setAttributeValue(__FUNCTION__, $value, 'html');
     }
-    
+
     public function isValueSet() {
         return $this->getAttribute('value')->isValueSet();
     }
