@@ -441,10 +441,10 @@ class Node implements Countable, Serializable {
     /**
      * 
      * @param callable|string $callable e.g. function ($instance) { $instance->trim(); }
-     * @param array $params
+     * @param array $params optional
      * @return self
      */
-    public function each($callableOrMethod, $params) {
+    public function each($callableOrMethod, $params = FALSE) {
 
         $param_arr = func_get_args();
         # Remove o primeiro parâmetro passado para a função
