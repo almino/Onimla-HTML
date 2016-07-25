@@ -81,18 +81,18 @@ class Element extends Node implements HasAttribute, Appendable {
             $this->commentSelector,
         ));
     }
-    
+
     public function unserialize($serialized) {
         list(
-            $this->before,
-            $this->after,
-            $this->children,
-            $this->parent,
-            $this->name,
-            $this->attr,
-            $this->selfClose,
-            $this->commentSelector,
-        ) = unserialize($serialized);
+                $this->before,
+                $this->after,
+                $this->children,
+                $this->parent,
+                $this->name,
+                $this->attr,
+                $this->selfClose,
+                $this->commentSelector,
+                ) = unserialize($serialized);
     }
 
     /**
@@ -682,7 +682,7 @@ class Element extends Node implements HasAttribute, Appendable {
         }
 
         self::log('About to return text.');
-        return strip_tags($this->__toString());
+        return ($this->length() > 0) ? strip_tags($this->__toString()) : '';
     }
 
     public function leftTrim() {
