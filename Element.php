@@ -448,6 +448,11 @@ class Element extends Node implements HasAttribute, Appendable {
     }
 
     public function open() {
+        $isSet = isset($this->selfClose);
+        $isTrue = $this->selfClose === TRUE;
+        $isFalse = $this->selfClose === FALSE;
+        $hasChildren = $this->length() > 0;
+
         $s = "{$this->before}<{$this->name}";
 
         if (count($this->attr) > 0) {
@@ -455,7 +460,10 @@ class Element extends Node implements HasAttribute, Appendable {
             $s .= implode(' ', $this->attr);
         }
 
-        if (isset($this->selfClose) AND $this->selfClose === TRUE) {
+        if (
+                (!$isSet AND ! $hasChildren)
+                OR ($isSet AND $isTrue)
+        ) {
             $s .= ' /';
         }
 
@@ -522,7 +530,15 @@ class Element extends Node implements HasAttribute, Appendable {
      * @return type
      */
     public function close() {
-        if ($this->selfClose) {
+        $isSet = isset($this->selfClose);
+        $isTrue = $this->selfClose === TRUE;
+        $isFalse = $this->selfClose === FALSE;
+        $hasChildren = $this->length() > 0;
+
+        if (
+                ($isSet AND $isTrue)
+                OR ( !$isSet AND ! $hasChildren)
+        ) {
             return '';
         }
 
@@ -534,19 +550,6 @@ class Element extends Node implements HasAttribute, Appendable {
         }
 
         return $s;
-
-        /*
-          $result = NULL;
-          if (!empty($this->children) OR $this->nonSelfClose) {
-          $result = '</' . $this->name . '>';
-          }
-
-          if ($this->commentSelector AND strlen($this->selector())) {
-          $result .= '<!-- /' . $this->selector() . ' -->';
-          }
-
-          return $result;
-         */
     }
 
     public function tidy() {
