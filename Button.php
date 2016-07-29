@@ -10,6 +10,7 @@ class Button extends Element {
         parent::__construct('button');
         $this->type($type);
         $this->text($text);
+        $this->selfClose(FALSE);
     }
 
     /**
