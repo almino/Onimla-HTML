@@ -131,12 +131,17 @@ class Attribute {
         $this->value .= $value;
     }
 
-    public function matchValue($regexOrstring) {
+    /**
+     * 
+     * @param string $regexOrstring Will be converted to an valid regular expression
+     * @return true
+     */
+    public function matchValue($regexOrstring, &$matches = null) {
         if (@preg_match($regexOrstring, NULL) === FALSE) {
             $regexOrstring = "/" . preg_quote($regexOrstring) . "/";
         }
 
-        return preg_match($regexOrstring, $this->getValue(TRUE));
+        return preg_match($regexOrstring, $this->getValue(TRUE), $matches);
     }
 
     public function value($value = FALSE) {
