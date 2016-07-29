@@ -154,28 +154,39 @@ class Klass extends \Onimla\HTML\Attribute {
         return $this;
     }
 
-    public function after($class, $classes) {
+    public function after($classes, $newClasses) {
+        # Garante que as classes estão corretas
+        $classes = self::outputValue(preg_split('/\s+/', $classes));
+        self::log("Adding classes before `{$classes}`", TRUE);
+
+        # Pega todos os parâmetros passados
         $newClasses = func_get_args();
         # Remove o primeiro parâmetro passado para a função
         array_shift($newClasses);
         # Garante que não há várias dimensões no array
         $newClasses = call_user_func_array(array($this, 'prepValue'), $newClasses);
+        self::log('Classes before to be added: .' . implode('.', $newClasses));
 
+        # Se algum parâmentro não foi passado, encerra por aqui
         if (count($newClasses) < 1) {
             return $this;
         }
 
-        $tmp = array_values($this->value);
+        # Garante que o array tem índices numéricos
+        #$tmp = array_values($this->value);
+        # Pesquisa a classe na string contendo todas as classes
+        $pos = strpos($this->getValue(TRUE), $classes);
 
-        $pos = array_search($class, $tmp);
-
+        # Se não encontrar, ERRO!
         if ($pos === FALSE) {
-            throw new \Exception("Can\'t find \$class ({$class}).");
-            /*
-              } elseif ($pos === 0) {
-              call_user_func_array(array($this, 'addValue'), func_get_args());
-             */
+            throw new \Exception("Can\'t find \$class ({$classes}).");
+        } elseif ($pos === 0) {
+            # Se estiver no início, mescla os vetores
+            $this->setValue(array_merge($newClasses, $this->value));
         } else {
+            $before = trim(substr($this->getValue(TRUE), 0, $pos));
+            $pos = count(preg_split('/\s+/', $before));
+
             $before = array_slice($this->value, 0, $pos + 1);
             $after = array_slice($this->value, $pos + 1);
 
