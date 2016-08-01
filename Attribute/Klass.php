@@ -185,7 +185,7 @@ class Klass extends \Onimla\HTML\Attribute {
             $this->setValue(array_merge($newClasses, $this->value));
         } else {
             $before = trim(substr($this->getValue(TRUE), 0, $pos));
-            $pos = count(preg_split('/\s+/', $before));
+            $pos = (count(preg_split('/\s+/', $before)) * 2) - 1;
 
             $before = array_slice($this->value, 0, $pos + 1);
             $after = array_slice($this->value, $pos + 1);
