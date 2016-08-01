@@ -440,7 +440,7 @@ class Node implements Countable, Serializable {
         array_shift($param_arr);
 
         foreach ($this->children as &$child) {
-            if (method_exists($child, $callableOrMethod)) {
+            if (is_string($callableOrMethod) AND method_exists($child, $callableOrMethod)) {
                 call_user_func_array(array($child, $callableOrMethod), $param_arr);
             } elseif (is_callable($callableOrMethod)) {
                 $callableOrMethod($child);
