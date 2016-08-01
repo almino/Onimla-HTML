@@ -184,7 +184,8 @@ class Klass extends \Onimla\HTML\Attribute {
             throw new \Exception("Can\'t find \$class ({$classes}).");
         } elseif ($pos === 0) {
             $before = trim(substr($this->getValue(TRUE), 0, $pos));
-            $pos = count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY));
+            $pos = count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY))  + count(preg_split('/\s+/', $classes, -1, PREG_SPLIT_NO_EMPTY));
+            #var_dump($pos);
             
             # Pega do começo até a posição final do que procuramos
             $before = array_slice($this->value, 0, $pos);
