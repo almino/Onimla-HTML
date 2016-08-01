@@ -176,16 +176,26 @@ class Klass extends \Onimla\HTML\Attribute {
         #$tmp = array_values($this->value);
         # Pesquisa a classe na string contendo todas as classes
         $pos = strpos($this->getValue(TRUE), $classes);
+        #var_dump($this->selector());
+        #var_dump($pos);
 
         # Se não encontrar, ERRO!
         if ($pos === FALSE) {
             throw new \Exception("Can\'t find \$class ({$classes}).");
         } elseif ($pos === 0) {
-            # Se estiver no início, mescla os vetores
-            $this->setValue(array_merge($newClasses, $this->value));
+            $before = trim(substr($this->getValue(TRUE), 0, $pos));
+            $pos = count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY));
+            
+            # Pega do começo até a posição final do que procuramos
+            $before = array_slice($this->value, 0, $pos);
+            # Pega a partir da posição final do que procuramos
+            $after = array_slice($this->value, $pos);
+
+            # Junta tudo em um array
+            $this->setValue(array_merge($before, $newClasses, $after));
         } else {
             $before = trim(substr($this->getValue(TRUE), 0, $pos));
-            $pos = (count(preg_split('/\s+/', $before)) * 2) - 1;
+            $pos = (count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY)) * 2) - 1;
 
             $before = array_slice($this->value, 0, $pos + 1);
             $after = array_slice($this->value, $pos + 1);
