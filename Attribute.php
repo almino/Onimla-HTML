@@ -134,7 +134,7 @@ class Attribute {
     /**
      * 
      * @param string $regexOrstring Will be converted to an valid regular expression
-     * @return true
+     * @return boolean
      */
     public function matchValue($regexOrstring, &$matches = null) {
         if (@preg_match($regexOrstring, NULL) === FALSE) {

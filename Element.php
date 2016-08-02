@@ -317,6 +317,11 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this;
     }
 
+    /**
+     * 
+     * @param string $class Will be converted to an valid regular expression
+     * @return boolean
+     */
     public function hasClass($class) {
         return $this->getClassAttribute()->matchValue($class);
     }
