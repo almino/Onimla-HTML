@@ -195,12 +195,17 @@ class Klass extends \Onimla\HTML\Attribute {
             # Junta tudo em um array
             $this->setValue(array_merge($before, $newClasses, $after));
         } else {
-            $before = trim(substr($this->getValue(TRUE), 0, $pos));
-            $pos = (count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY)) * 2) - 1;
+            # Pega as classes que irão aparecer antes das novas classes
+            $before = trim(substr($this->getValue(TRUE), 0, $pos + strlen($classes)));
+            # Calcula a posição no vetor baseado nas classes existentes
+            $pos = count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY)) - 1;
 
+            # Pega as classes precedentes
             $before = array_slice($this->value, 0, $pos + 1);
+            # Pega as classes que virão após
             $after = array_slice($this->value, $pos + 1);
 
+            # Junta tudo
             $this->setValue(array_merge($before, $newClasses, $after));
         }
 
