@@ -2,7 +2,9 @@
 
 namespace Onimla\HTML;
 
+use ArrayIterator;
 use Countable;
+use IteratorAggregate;
 use Serializable;
 
 /**
@@ -10,7 +12,7 @@ use Serializable;
  *
  * @author AlminoMelo at gmail.com
  */
-class Node implements Countable, Serializable {
+class Node implements Countable, IteratorAggregate, Serializable {
 
     /**
      * String to put before the instance string
@@ -78,11 +80,6 @@ class Node implements Countable, Serializable {
         $this->children[$name] = $value;
     }
 
-    public function __unset($name) {
-        self::log("Using magical method to UNSET a child named `{$name}`.", TRUE);
-        unset($this->children[$name]);
-    }
-
     public function __isset($name) {
         return isset($this->children[$name]);
     }
@@ -99,6 +96,22 @@ class Node implements Countable, Serializable {
         $glue = $this->indentSource ? $this->after . PHP_EOL . $this->before : "{$this->after}{$this->before}";
 
         return $this->before . implode($glue, $this->children) . $this->after;
+    }
+
+    public function length() {
+        return count($this->children);
+    }
+
+    public function countChildren() {
+        return call_user_func_array(array($this, 'length'), func_get_args());
+    }
+
+    public function count() {
+        return $this->length();
+    }
+    
+    public function getIterator() {
+        return new ArrayIterator($this->children);
     }
 
     public function serialize() {
@@ -129,18 +142,6 @@ class Node implements Countable, Serializable {
 
             call_user_func_array(array($this, 'append'), $arrayOrInstance);
         }
-    }
-
-    public function length() {
-        return count($this->children);
-    }
-
-    public function countChildren() {
-        return call_user_func_array(array($this, 'length'), func_get_args());
-    }
-
-    public function count() {
-        return $this->length();
     }
 
     public function getChildren() {
@@ -174,25 +175,28 @@ class Node implements Countable, Serializable {
             $this->children[] = ($child instanceof self) ? $child : (string) $child;
         }
 
-        return $this;
+        array_merge($this->children, array_map(function ($child) {
+                    return ($child instanceof self) ? $child : (string) $child;
+                }, $children));
+    }
+
+    protected function unshiftChildren($children) {
+        # Reduz todos os elementos passados para a função a um array de uma dimensão
+        $children = self::arrayFlatten(func_get_args());
+
+        # Se não temos filhos
+        if ($this->length() < 1) {
+            # Basta adicionar
+            $this->addChildren(...$children);
+        } else {
+            # Coloca o parâmetro no início do array
+            array_unshift($this->children, ...$children);
+            # !!! Não precisa reatribuir $this->children
+        }
     }
 
     public function prepend($children) {
-        foreach (array_reverse(self::arrayFlatten(func_get_args())) as $child) {
-            if ($this->length() < 1) {
-                $this->append($child);
-            } else {
-                # Coloca o parâmetro no início do array
-                array_unshift($this->children, $child);
-                # !!! Não precisa reatribuir $this->children
-            }
-
-            /*
-              if (method_exists($child, 'setParent')) {
-              $child->setParent($this);
-              }
-             */
-        }
+        $this->unshiftChildren(...func_get_args());
 
         return $this;
     }
@@ -208,7 +212,9 @@ class Node implements Countable, Serializable {
     }
 
     public function append($children) {
-        return call_user_func_array(array($this, 'addChildren'), func_get_args());
+        $this->addChildren(...func_get_args());
+
+        return $this;
     }
 
     public function appendTo($parent) {
