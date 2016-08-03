@@ -435,13 +435,15 @@ class Node implements Countable, Serializable {
      */
     public function each($callableOrMethod, $params = FALSE) {
 
-        $param_arr = func_get_args();
+        $parameters = func_get_args();
         # Remove o primeiro parâmetro passado para a função
-        array_shift($param_arr);
+        array_shift($parameters);
 
         foreach ($this->children as &$child) {
-            if (is_string($callableOrMethod) AND method_exists($child, $callableOrMethod)) {
-                call_user_func_array(array($child, $callableOrMethod), $param_arr);
+            if (get_class($child) == self::class) {
+                call_user_func_array(array($child, __FUNCTION__), func_get_args());
+            } elseif (is_string($callableOrMethod) AND method_exists($child, $callableOrMethod)) {
+                call_user_func_array(array($child, $callableOrMethod), $parameters);
             } elseif (is_callable($callableOrMethod)) {
                 $callableOrMethod($child);
             }
@@ -543,7 +545,7 @@ class Node implements Countable, Serializable {
                 if (is_object($child) AND method_exists($child, 'data')) {
                     $child->data('node:key', $key);
                 }
-                
+
                 #$child->after .= '<!-- ' . __CLASS__ . "::\${$key} -->";
             }
         }
