@@ -78,6 +78,11 @@ class Node implements Countable, Serializable {
         $this->children[$name] = $value;
     }
 
+    public function __unset($name) {
+        self::log("Using magical method to UNSET a child named `{$name}`.", TRUE);
+        unset($this->children[$name]);
+    }
+
     public function __isset($name) {
         return isset($this->children[$name]);
     }
