@@ -65,10 +65,6 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this->open() . $this->inner() . $this->close();
     }
 
-    public function strlen() {
-        return strlen($this->text());
-    }
-
     public function serialize() {
         return serialize(array(
             $this->before,
@@ -95,44 +91,6 @@ class Element extends Node implements HasAttribute, Appendable {
                 ) = unserialize($serialized);
     }
 
-    /**
-     * Retunrs a string like parent > element#id.class.classes
-     * @return string
-     */
-    public function path() {
-        $parent = $this->getParent();
-
-        if ($parent !== FALSE AND is_callable(array($parent, 'path'))) {
-            $parent = $parent->path() . ' > ';
-        }
-
-        $result = $parent . $this->name;
-
-        if (count($this->attr) > 1) {
-            $result .= $this->selector();
-        }
-
-        return $result;
-    }
-
-    public function selector($filter = FALSE) {
-        if ($filter == 'id') {
-            return '#' . (($this->id() === FALSE) ? $this->uniqid()->id() : $this->id());
-        }
-
-        $result = NULL;
-
-        if (count($this->attr) > 0) {
-            # id
-            $result .= (key_exists('id', $this->attr) ? $this->attr['id']->selector() : NULL);
-            # classes
-            $result .= ((key_exists('class', $this->attr) AND count($this->attr['class']) > 0) ?
-                            $this->attr['class']->selector() : NULL);
-        }
-
-        return $result;
-    }
-
     public function getParent() {
         return $this->parent;
     }
@@ -146,19 +104,6 @@ class Element extends Node implements HasAttribute, Appendable {
         self::log("Parent is {$parent->path()}");
         self::log("Child is {$this->path()}");
 
-        return $this;
-    }
-
-    public function selfClose($value = TRUE) {
-        self::log('Setting closing tag for ' . __CLASS__, TRUE);
-
-        if ($value) {
-            self::log('There are no children for ' . __CLASS__);
-            $this->removeChildren();
-        }
-
-        self::log('Self close is ' . var_export($value, TRUE));
-        $this->selfClose = $value;
         return $this;
     }
 
@@ -203,6 +148,10 @@ class Element extends Node implements HasAttribute, Appendable {
         $this->attr[$attr->getName()] = $attr;
 
         return $this;
+    }
+
+    public function setAttributeVal($name, $value, $output = FALSE) {
+        return $this->setAttributeValue($name, $value, $output);
     }
 
     public function addAttribute(Attribute $attr) {
@@ -254,17 +203,106 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this;
     }
 
-    public static function index2id($array, $subject = '{index}') {
-        foreach ($array as $key => $val) {
-            $id = preg_replace('/\{index\}/', $key, $subject);
-            if (is_object($val)) {
-                if (is_callable(array($val, 'id'))) {
-                    $val->id($id);
-                } elseif (is_callable(array($val, 'attr'))) {
-                    $val->attr('id', $id, 'safe');
+    public final function &findByAttr($attr, $value) {
+        $result = FALSE;
+
+        self::log("Looking for [{$attr}=\"{$value}\"]");
+
+        # Garantindo que o nome não tenha caracteres especiais
+        $attr = Attribute::removeSpecialCharacters(
+                        Attribute::convertAccentedCharacters(strtolower($attr)));
+
+
+        $path = "{$this->path()}[{$attr}=\"{$value}\"]";
+
+
+        # Vê se esse é o elemento procurado
+        if ($this->attr($attr) AND $this->attr($attr) == $value) {
+            self::log("{$this->path()} IS what you're looking for.");
+            return $this;
+        } else {
+            self::log("{$this->path()} IS NOT what you're looking for.");
+        }
+
+        # Se não houver filhos, abandona a procura
+        if (count($this->children) < 1) {
+            self::log("No children for {$path}");
+            return $result;
+        }
+
+        # Percorre os filhos
+        foreach ($this->children as $child) {
+            # Se o filho for um objeto OOHTML
+            if (method_exists($child, 'attr') AND method_exists($child, 'findByAttr')) {
+                # Vê se este filho é o procurado
+                if ($child->attr($attr) == $value) {
+                    if (method_exists($child, 'path')) {
+                        self::log($child->path() . ' IS what you\'re looking for.');
+                    }
+                    # Retorna o filho encontrado
+                    return $child;
+                } else {
+                    # Se este filho não é o procurado, pergunta aos filhos deste
+                    $found = $child->findByAttr($attr, $value);
+                    # Se tiver encontrado o filho procurado
+                    if ($found !== FALSE) {
+                        return $found;
+                    }
+                }
+            } else {
+                self::log('$child has no method `attr` OR `findByAttr`');
+                self::log('$child = ' . serialize($child));
+            }
+        }
+
+        #log_hr('info');
+        # Caso nada dê certo
+        return $result;
+    }
+
+    public function &findByName($value) {
+        return $this->findByAttr('name', $value);
+    }
+
+    public function &findById($value) {
+        self::log('Looking for #' . $value);
+        return $this->findByAttr('id', $value);
+    }
+
+    public function matchAttr($attr, $regex, $level = FALSE) {
+        if (!is_array($this->children) OR count($this->children) < 1) {
+            return array();
+        }
+
+        self::log('$level = ' . var_export($level, TRUE));
+        $level = ($level < 0) ? 0 : $level;
+
+        self::log("Looking for `{$attr}` matching \"{$regex}\" in {$this->path()}'s children.");
+
+        $result = array();
+
+        foreach ($this->children as &$child) {
+            if (is_object($child) AND method_exists($child, 'attr')) {
+                $value = $child->attr($attr);
+                if ($value !== FALSE AND preg_match($regex, $value)) {
+                    self::log("Found an element matching \"{$regex}\": {$child->path()}");
+                    $result[] = & $child;
+                } else {
+                    self::log("{$child->path()}[{$attr}] DOES NOT match `{$attr}` \"{$regex}\".");
+                    if ($level > 0 AND method_exists($child, __FUNCTION__)) {
+                        $result = array_merge(array_filter($child->matchAttr($attr, $regex, $level--)));
+                    } else {
+                        self::log('Reached end of $level or $child has no method "' . __FUNCTION__ . '".');
+                    }
                 }
             }
         }
+
+        return $result;
+    }
+
+    public function matchClass($classes, $level = FALSE) {
+        return $this->matchAttr('class', '/(' . preg_quote(implode('|', func_get_args())) . ')/i', $level);
     }
 
     /**
@@ -467,7 +505,7 @@ class Element extends Node implements HasAttribute, Appendable {
 
         if (
                 (!$isSet AND ! $hasChildren)
-                OR ($isSet AND $isTrue)
+                OR ( $isSet AND $isTrue)
         ) {
             $s .= ' /';
         }
@@ -557,36 +595,6 @@ class Element extends Node implements HasAttribute, Appendable {
         return $s;
     }
 
-    public function tidy() {
-        if (!function_exists('tidy_parse_string') OR ! function_exists('tidy_get_body')) {
-            return FALSE;
-        }
-
-        $tidy = tidy_parse_string($this, array(
-            'indent' => TRUE,
-            'indent-attributes' => TRUE,
-                ), 'UTF8');
-
-        return tidy_get_body($tidy)->child[0]->value;
-    }
-
-    public function append($children) {
-        self::log('Appending children to ' . get_class($this), FALSE);
-
-        foreach (self::filterChildren(func_get_args()) as $child) {
-            if (is_object($child) AND method_exists($child, 'setParent')) {
-                $child->setParent($this);
-            } else {
-                self::log('$child has no method `setParent`.');
-                self::log('$child = ' . serialize($child));
-            }
-
-            parent::append($child);
-        }
-
-        return $this;
-    }
-
     public function before($child, $children) {
         $new_children = func_get_args();
         # Remove o primeiro parâmetro passado para a função
@@ -663,6 +671,77 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this;
     }
 
+    public function append($children) {
+        self::log('Appending children to ' . get_class($this), FALSE);
+
+        $children = self::filterChildren(func_get_args());
+
+        array_map(function($child) {
+            if (is_object($child) AND method_exists($child, 'setParent')) {
+                $child->setParent($this);
+            } else {
+                self::log('$child has no method `setParent`.');
+                self::log('$child = ' . serialize($child));
+            }
+        }, $children);
+
+        parent::append(...$children);
+
+        return $this;
+    }
+
+    public function prepend($children) {
+        self::log('Prepending children to ' . get_class($this), FALSE);
+
+        $children = self::filterChildren(func_get_args());
+
+        array_map(function($child) {
+            if (is_object($child) AND method_exists($child, 'setParent')) {
+                $child->setParent($this);
+            } else {
+                self::log('$child has no method `setParent`.');
+                self::log('$child = ' . serialize($child));
+            }
+        }, $children);
+
+        parent::prepend(...$children);
+
+        return $this;
+    }
+
+    public function &find($name) {
+        $name = Attribute::name($name);
+        $r = array();
+
+        if ($this->name == $name) {
+            self::log("\"{$this->path()}\" is what you are looking for");
+            return $this;
+        } elseif (!empty($this->children)) {
+            foreach ($this->children as $child) {
+                if (method_exists($child, 'find')) {
+                    $tmp = $child->find($name);
+                    if (!empty($tmp)) {
+                        self::log("Found a child at \"{$child->path()}\"");
+                        $r[] = $tmp;
+                    } else {
+                        self::log("Not found at \"{$child->path()}\"");
+                    }
+                }
+            }
+        } elseif (empty($this->children)) {
+            self::log("\"{$this->path()}\" has no children.");
+        }
+
+        switch (sizeof($r)) {
+            case 1:
+                reset($r);
+                $r = current($r);
+                return $r;
+            default :
+                return $r;
+        }
+    }
+
     public function appendText($text) {
         $text = array_filter(self::arrayFlatten(func_get_args()), 'strlen');
         foreach ($text as $t) {
@@ -691,6 +770,44 @@ class Element extends Node implements HasAttribute, Appendable {
 
         self::log('About to return text.');
         return ($this->length() > 0) ? strip_tags($this->__toString()) : '';
+    }
+
+    public function ucfirst() {
+        if ($this->countChildren() < 1) {
+            return $this;
+        }
+
+        reset($this->children);
+
+        $current = current($this->children);
+
+        # Ignora os elementos vazios no início
+        while ((is_object($current) AND method_exists($current, 'countChildren') AND $current->countChildren() < 1) AND strlen($current) < 1) {
+            $current = next($this->children);
+        }
+
+        if (is_object($current) AND method_exists($current, __FUNCTION__)) {
+            $current->ucfirst();
+        } else {
+
+            # Vê qual a melhor função
+            $strtoupper = function_exists('mb_strtoupper') ? 'mb_strtoupper' : 'strtoupper';
+
+            # Transforma a string em um vetor
+            $pieces = str_split($current);
+
+            # Coloca  primeira letra do vetor em maiúsculo
+            $pieces[0] = $strtoupper($pieces[0]);
+
+            # Transforma o vetor em string e atribui ao 
+            $this->children[key($this->children)] = implode('', $pieces);
+        }
+
+        return $this;
+    }
+
+    public function strlen() {
+        return strlen($this->text());
     }
 
     public function leftTrim() {
@@ -733,190 +850,6 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this->rightTrim();
     }
 
-    public function ucfirst() {
-        if ($this->countChildren() < 1) {
-            return $this;
-        }
-
-        reset($this->children);
-
-        $current = current($this->children);
-
-        # Ignora os elementos vazios no início
-        while ((is_object($current) AND method_exists($current, 'countChildren') AND $current->countChildren() < 1) AND strlen($current) < 1) {
-            $current = next($this->children);
-        }
-
-        /*
-          echo '<pre>';
-          var_dump($this);
-          var_dump($current);
-          echo '</pre>';
-          die();
-         */
-
-        if (is_object($current) AND method_exists($current, __FUNCTION__)) {
-            $current->ucfirst();
-        } else {
-            /*
-              echo '<pre>';
-              var_dump($this);
-              var_dump($current);
-              echo '</pre>';
-              die();
-             */
-
-            # Vê qual a melhor função
-            $strtoupper = function_exists('mb_strtoupper') ? 'mb_strtoupper' : 'strtoupper';
-
-            # Transforma a string em um vetor
-            $pieces = str_split($current);
-
-            # Coloca  primeira letra do vetor em maiúsculo
-            $pieces[0] = $strtoupper($pieces[0]);
-
-            # Transforma o vetor em string e atribui ao 
-            $this->children[key($this->children)] = implode('', $pieces);
-        }
-
-        return $this;
-    }
-
-    public function &find($name) {
-        $name = Attribute::name($name);
-        $r = array();
-
-        if ($this->name == $name) {
-            self::log("\"{$this->path()}\" is what you are looking for");
-            return $this;
-        } elseif (!empty($this->children)) {
-            foreach ($this->children as $child) {
-                if (method_exists($child, 'find')) {
-                    $tmp = $child->find($name);
-                    if (!empty($tmp)) {
-                        self::log("Found a child at \"{$child->path()}\"");
-                        $r[] = $tmp;
-                    } else {
-                        self::log("Not found at \"{$child->path()}\"");
-                    }
-                }
-            }
-        } elseif (empty($this->children)) {
-            self::log("\"{$this->path()}\" has no children.");
-        }
-
-        switch (sizeof($r)) {
-            case 1:
-                reset($r);
-                $r = current($r);
-                return $r;
-            default :
-                return $r;
-        }
-    }
-
-    public final function &findByAttr($attr, $value) {
-        $result = FALSE;
-
-        self::log("Looking for [{$attr}=\"{$value}\"]");
-
-        # Garantindo que o nome não tenha caracteres especiais
-        $attr = Attribute::removeSpecialCharacters(
-                        Attribute::convertAccentedCharacters(strtolower($attr)));
-
-
-        $path = "{$this->path()}[{$attr}=\"{$value}\"]";
-
-
-        # Vê se esse é o elemento procurado
-        if ($this->attr($attr) AND $this->attr($attr) == $value) {
-            self::log("{$this->path()} IS what you're looking for.");
-            return $this;
-        } else {
-            self::log("{$this->path()} IS NOT what you're looking for.");
-        }
-
-        # Se não houver filhos, abandona a procura
-        if (count($this->children) < 1) {
-            self::log("No children for {$path}");
-            return $result;
-        }
-
-        # Percorre os filhos
-        foreach ($this->children as $child) {
-            # Se o filho for um objeto OOHTML
-            if (method_exists($child, 'attr') AND method_exists($child, 'findByAttr')) {
-                # Vê se este filho é o procurado
-                if ($child->attr($attr) == $value) {
-                    if (method_exists($child, 'path')) {
-                        self::log($child->path() . ' IS what you\'re looking for.');
-                    }
-                    # Retorna o filho encontrado
-                    return $child;
-                } else {
-                    # Se este filho não é o procurado, pergunta aos filhos deste
-                    $found = $child->findByAttr($attr, $value);
-                    # Se tiver encontrado o filho procurado
-                    if ($found !== FALSE) {
-                        return $found;
-                    }
-                }
-            } else {
-                self::log('$child has no method `attr` OR `findByAttr`');
-                self::log('$child = ' . serialize($child));
-            }
-        }
-
-        #log_hr('info');
-        # Caso nada dê certo
-        return $result;
-    }
-
-    public function &findByName($value) {
-        return $this->findByAttr('name', $value);
-    }
-
-    public function &findById($value) {
-        self::log('Looking for #' . $value);
-        return $this->findByAttr('id', $value);
-    }
-
-    public function matchAttr($attr, $regex, $level = FALSE) {
-        if (!is_array($this->children) OR count($this->children) < 1) {
-            return array();
-        }
-
-        self::log('$level = ' . var_export($level, TRUE));
-        $level = ($level < 0) ? 0 : $level;
-
-        self::log("Looking for `{$attr}` matching \"{$regex}\" in {$this->path()}'s children.");
-
-        $result = array();
-
-        foreach ($this->children as &$child) {
-            if (is_object($child) AND method_exists($child, 'attr')) {
-                $value = $child->attr($attr);
-                if ($value !== FALSE AND preg_match($regex, $value)) {
-                    self::log("Found an element matching \"{$regex}\": {$child->path()}");
-                    $result[] = & $child;
-                } else {
-                    self::log("{$child->path()}[{$attr}] DOES NOT match `{$attr}` \"{$regex}\".");
-                    if ($level > 0 AND method_exists($child, __FUNCTION__)) {
-                        $result = array_merge(array_filter($child->matchAttr($attr, $regex, $level--)));
-                    } else {
-                        self::log('Reached end of $level or $child has no method "' . __FUNCTION__ . '".');
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    public function matchClass($classes, $level = FALSE) {
-        return $this->matchAttr('class', '/(' . preg_quote(implode('|', func_get_args())) . ')/i', $level);
-    }
-
     public static final function htmlLeftTrim($str) {
         return preg_replace('/^' . self::$htmlTrim . '+/', '', ltrim($str));
     }
@@ -933,6 +866,83 @@ class Element extends Node implements HasAttribute, Appendable {
      */
     public static final function htmlTrim($str) {
         return self::htmlLeftTrim(self::htmlRightTrim($str));
+    }
+
+    public function selfClose($value = TRUE) {
+        self::log('Setting closing tag for ' . __CLASS__, TRUE);
+
+        if ($value) {
+            self::log('There are no children for ' . __CLASS__);
+            $this->removeChildren();
+        }
+
+        self::log('Self close is ' . var_export($value, TRUE));
+        $this->selfClose = $value;
+        return $this;
+    }
+
+    public static function index2id($array, $subject = '{index}') {
+        foreach ($array as $key => $val) {
+            $id = preg_replace('/\{index\}/', $key, $subject);
+            if (is_object($val)) {
+                if (is_callable(array($val, 'id'))) {
+                    $val->id($id);
+                } elseif (is_callable(array($val, 'attr'))) {
+                    $val->attr('id', $id, 'safe');
+                }
+            }
+        }
+    }
+
+    public function selector($filter = FALSE) {
+        if ($filter == 'id') {
+            return '#' . (($this->id() === FALSE) ? $this->uniqid()->id() : $this->id());
+        }
+
+        $result = NULL;
+
+        if (count($this->attr) > 0) {
+            # id
+            $result .= (key_exists('id', $this->attr) ? $this->attr['id']->selector() : NULL);
+            # classes
+            $result .= ((key_exists('class', $this->attr) AND count($this->attr['class']) > 0) ?
+                            $this->attr['class']->selector() : NULL);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Retunrs a string like parent > element#id.class.classes
+     * @return string
+     */
+    public function path() {
+        $parent = $this->getParent();
+
+        if ($parent !== FALSE AND is_callable(array($parent, 'path'))) {
+            $parent = $parent->path() . ' > ';
+        }
+
+        $result = $parent . $this->name;
+
+        if (count($this->attr) > 1) {
+            $result .= $this->selector();
+        }
+
+        return $result;
+    }
+
+    public function tidy() {
+        if (!function_exists('tidy_parse_string') OR ! function_exists('tidy_get_body')) {
+            return FALSE;
+        }
+
+        $tidy = tidy_parse_string($this, array(
+            'indent' => TRUE,
+            'indent-attributes' => TRUE,
+                ), 'UTF8');
+
+        return tidy_get_body($tidy)->child[0]->value;
     }
 
     public static function comment($instance, $string = FALSE) {
