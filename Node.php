@@ -544,12 +544,23 @@ class Node implements Countable, IteratorAggregate, Serializable {
         }
     }
 
+    /**
+     * Return an array without NULLs, FALSEs and empty strings.
+     * @param mixed $children
+     * @return array
+     */
     public static function filterChildren($children) {
+        # Can't use strlen. It will throw errors when working
+        # with any other types like arrays and objects.
         return array_filter(self::arrayFlatten(func_get_args()), function($val) {
             return ($val !== NULL AND $val !== FALSE AND $val !== '');
         });
     }
 
+    /**
+     * Add a <code>data-</code> parameter to each \Onimla\HTML\Element to identify the key used
+     * @param Node $instance
+     */
     public static function debug(self $instance) {
         foreach (func_get_args() as $instance) {
             foreach (new \ArrayIterator($instance->getChildren()) as $key => $child) {

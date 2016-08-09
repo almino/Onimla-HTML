@@ -754,7 +754,7 @@ class Element extends Node implements HasAttribute, Appendable {
     /**
      * Use as many parameters as you want
      * Replaces children elements
-     * @param string $text
+     * @param string $text as many as you want
      * @return Element|string
      */
     public function text($text = FALSE) {
