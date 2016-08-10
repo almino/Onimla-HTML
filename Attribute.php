@@ -38,6 +38,10 @@ class Attribute {
 
         return "{$this->getName()}=\"{$value}\"";
     }
+    
+    public function __clone() {
+        $this->value = is_object($this->value) ? clone $this->value : $this->value;
+    }
 
     public function selector() {
         return "[{$this}]";
