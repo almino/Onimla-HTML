@@ -48,7 +48,7 @@ class Label extends Element {
     }
     
     public function path() {
-        return parent::path() . "[{$this->attrFor()}]";
+        return parent::path() . "[{$this->getAttribute('for')}]";
     }
 
 }
