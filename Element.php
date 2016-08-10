@@ -65,6 +65,16 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this->open() . $this->inner() . $this->close();
     }
 
+    public function __clone() {
+        $this->parent = is_object($this->parent) ? clone $this->parent : $this->parent;
+
+        foreach ($this->attr as $key => $attr) {
+            $this->attr[$key] = is_object($attr) ? clone $attr : $attr;
+        }
+
+        parent::__clone();
+    }
+
     public function serialize() {
         return serialize(array(
             $this->before,
