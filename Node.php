@@ -84,10 +84,21 @@ class Node implements Countable, IteratorAggregate, Serializable {
         return isset($this->children[$name]);
     }
 
+    /**
+     * Don't forget to update references to sub trees.
+     */
     public function __clone() {
+        $new = array();
+
         foreach ($this->children as $key => $child) {
-            $this->children[$key] = is_object($child) ? clone $child : $child;
+            if (is_object($child)) {
+                $new[$key] = clone $child;
+            } else {
+                $new[$key] = $child;
+            }
         }
+
+        $this->children = $new;
     }
 
     public function __toString() {
@@ -109,7 +120,7 @@ class Node implements Countable, IteratorAggregate, Serializable {
     public function count() {
         return $this->length();
     }
-    
+
     public function getIterator() {
         return new ArrayIterator($this->children);
     }
@@ -562,13 +573,15 @@ class Node implements Countable, IteratorAggregate, Serializable {
      * @param Node $instance
      */
     public static function debug(self $instance) {
-        foreach (func_get_args() as $instance) {
-            foreach (new \ArrayIterator($instance->getChildren()) as $key => $child) {
-                if (is_object($child) AND method_exists($child, 'data')) {
-                    $child->data('node:key', $key);
+        foreach (self::arrayFlatten(func_get_args()) as $instance) {
+            foreach ($instance as $key => $child) {
+                if (is_object($child)) {
+                    if (method_exists($child, 'data')) {
+                        $child->data('node:key', $key);
+                    } elseif ($child instanceof Node) {
+                        self::debug($child);
+                    }
                 }
-
-                #$child->after .= '<!-- ' . __CLASS__ . "::\${$key} -->";
             }
         }
     }

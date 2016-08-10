@@ -55,22 +55,24 @@ class Element extends Node implements HasAttribute, Appendable {
     }
 
     public function __toString() {
-        # DEBUG
-        #$class = (empty($this->attr['class'])) ? '' : '.' . implode('.', $this->attr['class']);
-        #echo "\n<pre>";
-        #echo "\n<code>{$this->name}{$class}'s children:</code>\n";
-        #var_dump($this->children);
-        #echo "</pre\n>";
-
         return $this->open() . $this->inner() . $this->close();
     }
 
     public function __clone() {
         $this->parent = is_object($this->parent) ? clone $this->parent : $this->parent;
 
+        $new = array();
+
         foreach ($this->attr as $key => $attr) {
-            $this->attr[$key] = is_object($attr) ? clone $attr : $attr;
+            if (is_object($attr)) {
+                $new[$key] = clone $attr;
+            } else {
+                $new[$key] = $attr;
+            }
         }
+
+
+        $this->attr = $new;
 
         parent::__clone();
     }
