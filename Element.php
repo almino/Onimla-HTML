@@ -281,31 +281,49 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this->findByAttr('id', $value);
     }
 
-    public function matchAttr($attr, $regex, $level = FALSE) {
+    /**
+     * Find children which has the value passed in the second argument.
+     * @param string $attr
+     * @param string $regexOrValue Will be converted to an valid regular expression
+     * @param integer $level
+     * @return \Onimla\HTML\Node
+     */
+    public function matchAttribute($attr, $regexOrValue, $level = FALSE) {
+        # Retornamos um nó de elementos
+        $result = new Node;
+
+        # Se não temos elementos filhos, retornamos o nó vazio
         if (!is_array($this->children) OR count($this->children) < 1) {
-            return array();
+            return $result;
         }
 
+        # O nível para buscar
         self::log('$level = ' . var_export($level, TRUE));
+        # Garante que o nível é maior que ou igual a zero
         $level = ($level < 0) ? 0 : $level;
 
-        self::log("Looking for `{$attr}` matching \"{$regex}\" in {$this->path()}'s children.");
-
-        $result = array();
+        self::log("Looking for `{$attr}` matching \"{$regexOrValue}\" in {$this->path()}'s children.");
 
         foreach ($this->children as &$child) {
+            /* @var $child self */
+            # Verifica se o elemento filho da vez tem o método `attr`
             if (is_object($child) AND method_exists($child, 'attr')) {
-                $value = $child->attr($attr);
-                if ($value !== FALSE AND preg_match($regex, $value)) {
-                    self::log("Found an element matching \"{$regex}\": {$child->path()}");
-                    $result[] = & $child;
+                # Pede o atributo.
+                $attr = $child->attr($attr);
+                # Verifica se o atributo foi encontrado
+                if ($attr !== FALSE AND $attr->matchValue($regexOrValue)) {
+                    self::log("Found an element matching \"{$regexOrValue}\": {$child->path()}");
+                    # Se tive sido encontrado, coloca na coleção
+                    $result->append(&$child);
                 } else {
-                    self::log("{$child->path()}[{$attr}] DOES NOT match `{$attr}` \"{$regex}\".");
-                    if ($level > 0 AND method_exists($child, __FUNCTION__)) {
-                        $result = array_merge(array_filter($child->matchAttr($attr, $regex, $level--)));
-                    } else {
-                        self::log('Reached end of $level or $child has no method "' . __FUNCTION__ . '".');
-                    }
+                    self::log("{$child->path()}[{$attr}] DOES NOT match `{$attr}` \"{$regexOrValue}\".");
+                }
+
+                # Se é para se aprofundar na árvore
+                if ($level > 0 AND method_exists($child, __FUNCTION__)) {
+                    $result->merge($child->matchAttribute($attr, $regexOrValue, $level--));
+                } else {
+                    self::log('Reached end of $level or $child has no method "' . __FUNCTION__ . '".');
                 }
             }
         }
@@ -313,8 +331,31 @@ class Element extends Node implements HasAttribute, Appendable {
         return $result;
     }
 
+    /**
+     * 
+     * @param string $attr
+     * @param string $regexOrstring
+     * @param integer $level
+     * @return \Onimla\HTML\Node
+     */
+    public function matchAttr($attr, $regexOrstring, $level = FALSE) {
+        return $this->matchAttribute($attr, $regexOrstring, $level);
+    }
+
+    /**
+     * 
+     * @param string|array $classes Will be converted to an valid regular expression
+     * @param integer $level
+     * @return Attribute\Klass
+     */
     public function matchClass($classes, $level = FALSE) {
-        return $this->matchAttr('class', '/(' . preg_quote(implode('|', func_get_args())) . ')/i', $level);
+        if (is_array($classes)) {
+            $classes = '/'
+                    . implode('|', array_map('preg_quote', Node::arrayFlatten($classes)))
+                    . '/';
+        }
+
+        return $this->matchAttribute('class', $classes);
     }
 
     /**
@@ -351,7 +392,7 @@ class Element extends Node implements HasAttribute, Appendable {
             return $this;
         }
 
-        call_user_func_array(array($this->attr[$attrName], 'addValue'), $values);
+        $this->attr[$attrName]->addValue(...$values);
         return $this;
     }
 
