@@ -11,13 +11,23 @@ interface HasAttribute {
 
     public function attr($name, $value = FALSE, $output = FALSE);
 
-    public function matchAttr($name, $regex, $level = FALSE);
+    public function removeAttr($name);
+
+    public function matchAttr($attr, $regexOrString, $level = FALSE);
+
+    public function matchClass($classes, $level = FALSE);
 
     public function &findByAttr($attr, $value);
 
     public function &findByName($value);
 
     public function &findById($value);
-    
-    public function matchClass($classes, $level = FALSE);
+
+    public function getClassAttribute();
+
+    public function addClass($class);
+
+    public function removeClass($class);
+
+    public function id($value = FALSE);
 }

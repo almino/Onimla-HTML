@@ -334,12 +334,12 @@ class Element extends Node implements HasAttribute, Appendable {
     /**
      * 
      * @param string $attr
-     * @param string $regexOrstring
+     * @param string $regexOrString
      * @param integer $level
      * @return \Onimla\HTML\Node
      */
-    public function matchAttr($attr, $regexOrstring, $level = FALSE) {
-        return $this->matchAttribute($attr, $regexOrstring, $level);
+    public function matchAttr($attr, $regexOrString, $level = FALSE) {
+        return $this->matchAttribute($attr, $regexOrString, $level);
     }
 
     /**
@@ -527,14 +527,13 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this;
     }
 
-    function removeAttr($name) {
-        # Garante que não há caracteres especiais no nome do atributo
-        $name = Attribute::name($name);
-
+    public function removeAttr($name) {
         # Se houver atributos
         if (!empty($this->attr)) {
             # Para cada parâmetro passado para a função
             foreach (self::arrayFlatten(func_get_args()) as $attr) {
+                # Garante que não há caracteres especiais no nome do atributo
+                $attr = Attribute::name($attr);
                 # Remove o atributo
                 unset($this->attr[$attr]);
             }
