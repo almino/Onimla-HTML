@@ -137,15 +137,15 @@ class Attribute {
 
     /**
      * 
-     * @param string $regexOrstring Will be converted to an valid regular expression
+     * @param string $regexOrString Will be converted to an valid regular expression
      * @return boolean
      */
-    public function matchValue($regexOrstring, &$matches = null) {
-        if (@preg_match($regexOrstring, NULL) === FALSE) {
-            $regexOrstring = "/" . preg_quote($regexOrstring) . "/";
+    public function matchValue($regexOrString, &$matches = null) {
+        if (@preg_match($regexOrString, NULL) === FALSE) {
+            $regexOrString = "/" . preg_quote($regexOrString) . "/";
         }
 
-        return preg_match($regexOrstring, $this->getValue(TRUE), $matches);
+        return preg_match($regexOrString, $this->getValue(TRUE), $matches);
     }
 
     public function value($value = FALSE) {
