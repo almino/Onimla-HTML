@@ -109,16 +109,16 @@ class Node implements Countable, IteratorAggregate, Serializable {
         return $this->before . implode($glue, $this->children) . $this->after;
     }
 
-    public function length() {
+    public function count() {
         return count($this->children);
     }
 
-    public function countChildren() {
-        return call_user_func_array(array($this, 'length'), func_get_args());
+    public function length() {
+        return $this->count();
     }
 
-    public function count() {
-        return $this->length();
+    public function countChildren() {
+        return $this->count();
     }
 
     public function getIterator() {
