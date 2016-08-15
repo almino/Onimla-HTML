@@ -2,6 +2,8 @@
 
 namespace Onimla\HTML\Traits;
 
+use Onimla\HTML\Attribute;
+
 trait Name {
 
     /**
