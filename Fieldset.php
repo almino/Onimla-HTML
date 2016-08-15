@@ -2,9 +2,9 @@
 
 namespace Onimla\HTML;
 
-#require_once 'Element.class.php';
-
 class Fieldset extends Element {
+    
+    use Traits\Name;
 
     public function __construct($children = FALSE, $attr = NULL) {
         parent::__construct('fieldset', $attr, $children);
@@ -21,10 +21,6 @@ class Fieldset extends Element {
 
     public function form($value = FALSE) {
         return $this->attr('form', $value, 'safe');
-    }
-
-    public function name($value = FALSE) {
-        return $this->attr('name', $value, 'safe');
     }
 
 }

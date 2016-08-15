@@ -2,24 +2,15 @@
 
 namespace Onimla\HTML;
 
-#require_once 'Element.class.php';
-
 class Button extends Element {
+    
+    use Traits\Name;
 
     function __construct($text = FALSE, $type = 'button') {
         parent::__construct('button');
         $this->type($type);
         $this->text($text);
         $this->selfClose(FALSE);
-    }
-
-    /**
-     * 
-     * @param string $value
-     * @return string|Button
-     */
-    function name($value = FALSE) {
-        return $this->attr('name', $value, 'safe');
     }
 
     /**

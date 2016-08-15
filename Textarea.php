@@ -2,9 +2,9 @@
 
 namespace Onimla\HTML;
 
-#require_once 'Element.class.php';
-
 class Textarea extends Element {
+    
+    use Traits\Name;
 
     public function __construct($name, $value = FALSE, $rows = FALSE, $attr = NULL, $children = FALSE) {
         parent::__construct('textarea', $attr, $children);
@@ -12,10 +12,6 @@ class Textarea extends Element {
         $this->value($value);
         $this->rows($rows);
         $this->selfClose(FALSE);
-    }
-
-    public function name($value = FALSE) {
-        return $this->attr('name', $value, 'safe');
     }
 
     public function disabled() {

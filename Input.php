@@ -5,6 +5,8 @@ namespace Onimla\HTML;
 use Onimla\HTML\Attribute;
 
 class Input extends Element {
+    
+    use Traits\Name;
 
     public function __construct($name = FALSE, $value = FALSE, $type = 'text', $attr = FALSE) {
         parent::__construct('input', $attr);
@@ -60,24 +62,6 @@ class Input extends Element {
         }
 
         return $this->attr(__FUNCTION__, $value, 'int');
-    }
-
-    /**
-     * Get / set value for <code>name</code> attribute
-     * @param string $value
-     * @return string|\Onimla\HTML\Input
-     */
-    public function name($value = FALSE) {
-        if ($value === FALSE) {
-            return $this->getAttributeValue(__FUNCTION__);
-        }
-
-        $attr = new Attribute(__FUNCTION__, $value);
-        $attr->setOutput('safe');
-
-        $this->attr($attr);
-
-        return $this;
     }
 
     public function placeholder($value = FALSE) {

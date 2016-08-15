@@ -2,12 +2,9 @@
 
 namespace Onimla\HTML;
 
-/*
-  require_once 'Element.class.php';
-  require_once 'Option.class.php';
- */
-
 class Select extends Element {
+    
+    use Traits\Name;
 
     /**
      * @param string $name
@@ -48,14 +45,6 @@ class Select extends Element {
 
     public function multiple($set = TRUE) {
         return $set ? $this->attr('multiple', 'multiple') : $this->removeAttr('multiple');
-    }
-
-    public function name($value = FALSE) {
-        if ($value === FALSE) {
-            return $this->getAttribute(__FUNCTION__);
-        }
-
-        return $this->setAttributeValue(__FUNCTION__, $value, 'safe');
     }
 
     public function required($set = TRUE) {
