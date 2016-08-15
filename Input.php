@@ -62,9 +62,14 @@ class Input extends Element {
         return $this->attr(__FUNCTION__, $value, 'int');
     }
 
+    /**
+     * Get / set value for <code>name</code> attribute
+     * @param string $value
+     * @return string|\Onimla\HTML\Input
+     */
     public function name($value = FALSE) {
         if ($value === FALSE) {
-            return $this->getAttribute(__FUNCTION__);
+            return $this->getAttributeValue(__FUNCTION__);
         }
 
         $attr = new Attribute(__FUNCTION__, $value);
