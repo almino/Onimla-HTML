@@ -314,7 +314,7 @@ class Element extends Node implements HasAttribute, Appendable {
                 if ($attr !== FALSE AND $attr->matchValue($regexOrValue)) {
                     self::log("Found an element matching \"{$regexOrValue}\": {$child->path()}");
                     # Se tive sido encontrado, coloca na coleção
-                    $result->append(&$child);
+                    $result->append($child);
                 } else {
                     self::log("{$child->path()}[{$attr}] DOES NOT match `{$attr}` \"{$regexOrValue}\".");
                 }
