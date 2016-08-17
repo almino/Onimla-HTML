@@ -724,9 +724,14 @@ class Element extends Node implements HasAttribute, Appendable {
     }
 
     public function append($children) {
+        $children = self::filterChildren(func_get_args());
+
         self::log('Appending children to ' . get_class($this), FALSE);
 
-        $children = self::filterChildren(func_get_args());
+        if (count($children) < 1) {
+            self::log('Nothing to append.');
+            return $this;
+        }
 
         array_map(function($child) {
             if (is_object($child) AND method_exists($child, 'setParent')) {
@@ -751,7 +756,6 @@ class Element extends Node implements HasAttribute, Appendable {
             self::log('Nothing to prepend.');
             return $this;
         }
-
 
         array_map(function($child) {
             if (is_object($child) AND method_exists($child, 'setParent')) {
