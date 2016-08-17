@@ -51,7 +51,15 @@ class Klass extends \Onimla\HTML\Attribute {
     }
 
     public static function outputValue($value) {
-        $values = array_filter(\Onimla\HTML\Node::arrayFlatten(func_get_args()), 'strlen');
+        # Pega todos os parâmetros
+        $values = \Onimla\HTML\Node::arrayFlatten(func_get_args());
+        # Tranforma strings com espaços em vetores
+        array_walk($values, function(&$param) {
+            $param = explode(' ', $param);
+        });
+        # Remove o que não nos intressa (vazio)
+        $values = array_filter(\Onimla\HTML\Node::arrayFlatten($values), 'strlen');
+        # Aplica a função que torna o valor apto para cada um dos parâmetros
         return implode(' ', array_map(array(__CLASS__, 'safeValue'), $values));
     }
 
