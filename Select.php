@@ -3,7 +3,7 @@
 namespace Onimla\HTML;
 
 class Select extends Element {
-    
+
     use Traits\Name;
 
     /**
@@ -65,12 +65,52 @@ class Select extends Element {
         return $this;
     }
 
+    /**
+     * Get selected <code>&lt;option&gt;</code> or set an
+     * <code>&lt;option&gt;</code> as selected.
+     * @param string $value optional
+     * @return \Onimla\HTML\Select|string
+     */
     public function value($value = FALSE) {
-        $found = $this->findByAttr('selected', 'selected');
+        if ($value === FALSE) {
+            $found = $this->findByAttr('selected', 'selected');
 
-        if (is_object($found) AND method_exists($found, 'attr')) {
-            return $found->attr('value') === FALSE ? $found->text() : $found->attr('value');
+            if (is_object($found) AND method_exists($found, 'attr')) {
+                return $found->attr('value') === FALSE ? $found->text() : $found->attr('value')->getValue();
+            }
+
+            return $this;
         }
+
+        foreach ($this->getChildren() as $option) {
+            /* @var $option Element */
+            # Case the `value` attribute is equal to $value
+            if (
+                    is_object($option)
+                    AND method_exists($option, 'attr')
+                    AND $option->attr('value') !== FALSE
+                    AND html_entity_decode($option->attr('value')) == $value
+            ) {
+                $this->deselectAll();
+                $option->setAttributeVal('selected', 'selected');
+                return $this;
+            }
+
+            # Case has no `value` attribute set
+            if (
+                    is_object($option)
+                    AND method_exists($option, 'attr')
+                    AND $option->attr('value') === FALSE
+                    AND method_exists($option, 'text')
+                    AND html_entity_decode($option->text()) == $value
+            ) {
+                $this->deselectAll();
+                $option->setAttributeVal('selected', 'selected');
+                return $this;
+            }
+        }
+
+        return $this;
     }
 
     public function firstOption($text = FALSE) {
