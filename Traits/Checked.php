@@ -2,14 +2,14 @@
 
 namespace Onimla\HTML\Traits;
 
+use Onimla\HTML\Constant;
+
 trait Checked {
-    
-    private $attr = 'checked';
-    
+
     public function check() {
         $this->setChecked();
     }
-    
+
     public function uncheck() {
         $this->unsetChecked();
     }
@@ -17,21 +17,21 @@ trait Checked {
     public function checked() {
         $this->setChecked();
     }
-    
+
     /**
      * 
-     * @return bool
+     * @return boolean
      */
     public function isChecked() {
-        return $this->attr($this->attr);
+        return (bool) $this->attr(Constant::CHECKED);
     }
 
     public function setChecked() {
-        $this->attr(new Attribute($this->attr));
+        $this->attr(new Attribute(Constant::CHECKED));
     }
 
     public function unsetChecked() {
-        $this->removeAttr($this->attr);
+        $this->removeAttr(Constant::CHECKED);
     }
 
 }
