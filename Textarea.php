@@ -37,7 +37,7 @@ class Textarea extends Element {
      * @return Textarea|string method chaining or the value
      */
     public function value($value = FALSE) {
-        return $this->text($value);
+        return $this->text(...func_get_args());
     }
 
 }
