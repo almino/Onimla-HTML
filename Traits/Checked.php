@@ -3,6 +3,7 @@
 namespace Onimla\HTML\Traits;
 
 use Onimla\HTML\Constant;
+use Onimla\HTML\Attribute;
 
 trait Checked {
 
