@@ -958,7 +958,7 @@ class Element extends Node implements HasAttribute, Appendable {
 
     public function selector($filter = FALSE) {
         if ($filter == 'id') {
-            return '#' . (($this->id() === FALSE) ? $this->uniqid()->id() : $this->id());
+            return (($this->id() === FALSE) ? $this->uniqid()->id()->selector() : $this->id()->selector());
         }
 
         $result = NULL;
