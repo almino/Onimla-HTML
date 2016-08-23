@@ -239,7 +239,7 @@ class Klass extends \Onimla\HTML\Attribute {
         $remove = call_user_func_array(array(__CLASS__, 'outputValue'), func_get_args());
         $current = $this->getValue();
 
-        if (is_int(strstr($current, $remove))) {
+        if (strlen($remove) > 0 AND is_int(strstr($current, $remove))) {
             $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
         }
 
