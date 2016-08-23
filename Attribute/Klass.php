@@ -186,15 +186,13 @@ class Klass extends \Onimla\HTML\Attribute {
         $pos = strpos($this->getValue(TRUE), $classes);
         #var_dump($this->selector());
         #var_dump($pos);
-
         # Se não encontrar, ERRO!
         if ($pos === FALSE) {
             throw new \Exception("Can\'t find \$class ({$classes}).");
         } elseif ($pos === 0) {
             $before = trim(substr($this->getValue(TRUE), 0, $pos));
-            $pos = count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY))  + count(preg_split('/\s+/', $classes, -1, PREG_SPLIT_NO_EMPTY));
+            $pos = count(preg_split('/\s+/', $before, -1, PREG_SPLIT_NO_EMPTY)) + count(preg_split('/\s+/', $classes, -1, PREG_SPLIT_NO_EMPTY));
             #var_dump($pos);
-            
             # Pega do começo até a posição final do que procuramos
             $before = array_slice($this->value, 0, $pos);
             # Pega a partir da posição final do que procuramos
@@ -241,7 +239,9 @@ class Klass extends \Onimla\HTML\Attribute {
         $remove = call_user_func_array(array(__CLASS__, 'outputValue'), func_get_args());
         $current = $this->getValue();
 
-        $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
+        if (is_int(strstr($current, $remove))) {
+            $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
+        }
 
         return $this;
     }
