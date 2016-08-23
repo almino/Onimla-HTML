@@ -3,9 +3,10 @@
 namespace Onimla\HTML;
 
 use Onimla\HTML\Attribute;
+use Onimla\HTML\Polymorphism\UserInput;
 
-class Input extends Element {
-    
+class Input extends Element implements userInput {
+
     use Traits\Name;
 
     public function __construct($name = FALSE, $value = FALSE, $type = 'text', $attr = FALSE) {
@@ -32,28 +33,44 @@ class Input extends Element {
         return $this->attr(__FUNCTION__, $value);
     }
 
-    public function setAutoFocus($set = TRUE) {
-        return $this->attr('autofocus', 'autofocus');
+    public function setAutoFocus() {
+        $this->attr('autofocus', 'autofocus');
     }
 
-    public function unsetAutoFocus($set = TRUE) {
-        return $this->removeAttr('autofocus');
+    public function unsetAutoFocus() {
+        $this->removeAttr('autofocus');
     }
 
-    public function isAutoFocus($set = TRUE) {
+    public function isAutoFocus() {
+        return $this->attr('autofocus');
+    }
+    
+    public function autofocus() {
+        return $this->isAutoFocus();
+    }
+
+    public function setDisabled() {
+        $this->attr('disabled', 'disabled');
+    }
+
+    public function unsetDisabled() {
+        $this->removeAttr('disabled');
+    }
+    
+    public function isDisabled() {
         return $this->attr('autofocus');
     }
 
-    public function disabled($set = TRUE) {
-        return $set ? $this->attr('disabled', 'disabled') : $this->removeAttr('checked');
+    public function disabled() {
+        return $this->isDisabled();
     }
 
     public function disable() {
-        return $this->attr('disabled', 'disabled');
+        return $this->setDisabled();
     }
 
     public function enable() {
-        return $this->removeAttr('disabled');
+        return $this->unsetDisabled();
     }
 
     public function maxlength($value = FALSE) {

@@ -2,11 +2,13 @@
 
 namespace Onimla\HTML\Polymorphism;
 
-interface Input {
+interface UserInput {
 
     public function setDisabled();
 
     public function unsetDisabled();
+
+    public function isDisabled();
 
     public function disabled();
 
