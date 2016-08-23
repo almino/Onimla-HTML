@@ -584,40 +584,36 @@ class Element extends Node implements HasAttribute, Appendable {
             return '';
         }
 
-        #self::log('Children for `' . get_class($this) . '` are ' . var_export($this->children, TRUE));
-
         $glue = $this->indentSource ? PHP_EOL . self::TAB : '';
-        /* @var $regex string line separator character U+2028 */
-        #$regex = '/\p{Zl}/u';
-        $pattern = '/\n/';
 
-        #$result = implode($glue, $this->children);
-        #return $result;
+        return implode($glue, $this->children);
 
-        $r = '';
+        /*
+          $r = '';
 
-        #self::log('Indent source: ' . var_export($this->indentSource, TRUE), TRUE);
-        #self::log('Glue: ' . var_export($glue, TRUE), TRUE);
+          #self::log('Indent source: ' . var_export($this->indentSource, TRUE), TRUE);
+          #self::log('Glue: ' . var_export($glue, TRUE), TRUE);
 
-        if ($this->length() > 0) {
-            foreach ($this->children as $child) {
-                #var_dump(preg_split($pattern, htmlentities($child), -1, PREG_SPLIT_NO_EMPTY));
-                /*
-                  if (!is_object($child)) {
-                  $r .= $glue;
-                  }
-                 */
+          if ($this->length() > 0) {
+          foreach ($this->children as $child) {
+          #var_dump(preg_split($pattern, htmlentities($child), -1, PREG_SPLIT_NO_EMPTY));
+          /*
+          if (!is_object($child)) {
+          $r .= $glue;
+          }
+         *//*
 
-                $r .= implode($glue, preg_split($pattern, $child, -1, PREG_SPLIT_NO_EMPTY));
-                $r .= $this->indentSource ? PHP_EOL : '';
+          $r .= implode($glue, preg_split($pattern, $child, -1, PREG_SPLIT_NO_EMPTY));
+          $r .= $this->indentSource ? PHP_EOL : '';
 
-                if (!is_object($child) AND $child != $this->last()) {
-                    $r .= $this->indentSource ? self::TAB : '';
-                }
-            }
-        }
+          if (!is_object($child) AND $child != $this->last()) {
+          $r .= $this->indentSource ? self::TAB : '';
+          }
+          }
+          }
 
-        return $r;
+          return $r;
+         */
     }
 
     /**
