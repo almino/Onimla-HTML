@@ -403,7 +403,11 @@ class BrazilDateInterval extends Node {
     }
 
     protected function spanDay(\DateTime $datetime, $format = 'time_short') {
-        $span = new Span(BrazilTime::spellSmallNumbers($datetime->format('j')), 'day day-spelled number-spelled');
+        if ($this->spellSmallNumbers) {
+            $span = new Span(BrazilTime::spellSmallNumbers($datetime->format('j')), 'day day-spelled number-spelled');
+        } else {
+            $span = new Span($datetime->format('j'), 'day day-number day-of-month');
+        }
 
         $span->data('value', $datetime->format('j'));
 
