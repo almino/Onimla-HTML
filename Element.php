@@ -819,7 +819,7 @@ class Element extends Node implements HasAttribute, Appendable {
         self::log('Setting text for ' . get_class($this), TRUE);
 
         $text = array_filter(self::arrayFlatten(func_get_args()), 'strlen');
-        self::log('Parameters passed: ' . count($text) . ' -- ' . var_export($text, TRUE));
+        self::log('Parameters passed: ' . count($text) . ' -- ' . print_r($text, TRUE));
 
         if (count($text) > 0) {
             $this->removeChildren();
