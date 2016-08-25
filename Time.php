@@ -26,15 +26,16 @@ class Time extends Element {
      * @return \Onimla\HTML\Time|Attribute
      */
     public function dateTime($value = FALSE) {
+        $attrName = 'datetime';
         self::log('Getting or setting datetime attribute for ' . get_class($this), TRUE);
 
         if (strlen($value) < 5) {
             self::log('Value passed is invalid, returning old value.');
             self::log('$value = ' . var_export($value, TRUE));
-            return $this->attr(__FUNCTION__);
+            return $this->attr($attrName);
         }
 
-        $attr = new Attribute(__FUNCTION__, $value);
+        $attr = new Attribute($attrName, $value);
         $attr->setOutput('encode');
 
         $this->attr($attr);

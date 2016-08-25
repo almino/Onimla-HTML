@@ -30,7 +30,7 @@ class BrazilTime extends Time {
 
     public function __toString() {
         if ($this->length() < 1) {
-            $dt = new \DateTime($this->dateTime()->getValue());
+            $dt = new \DateTime($this->dateTime());
             $date_format = 'date_' . $this->date_format;
             $time_format = 'time_' . $this->time_format;
 
@@ -82,7 +82,7 @@ class BrazilTime extends Time {
     }
 
     public function getFormattedString($format, $spell = FALSE) {
-        $dt = new \DateTime($this->dateTime()->getValue());
+        $dt = new \DateTime($this->dateTime());
 
         if (strpos($format, 'date_') === 0) {
             return str_replace(array(
