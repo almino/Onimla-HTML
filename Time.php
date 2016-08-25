@@ -2,8 +2,6 @@
 
 namespace Onimla\HTML;
 
-#require_once 'Element.class.php';
-
 class Time extends Element {
 
     public function __construct($text = FALSE, $datetime = FALSE) {
@@ -32,7 +30,7 @@ class Time extends Element {
         if (strlen($value) < 5) {
             self::log('Value passed is invalid, returning old value.');
             self::log('$value = ' . var_export($value, TRUE));
-            return $this->attr($attrName);
+            return $this->getAttributeValue($attrName);
         }
 
         $attr = new Attribute($attrName, $value);
