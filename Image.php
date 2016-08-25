@@ -2,11 +2,11 @@
 
 namespace Onimla\HTML;
 
-#require_once 'Element.class.php';
+use Onimla\HTML\Attribute\AlternateText;
 
 class Image extends Element {
 
-    function __construct($src, $alt = FALSE) {
+    function __construct($src = FALSE, $alt = FALSE) {
         parent::__construct('img');
         $this->src($src);
         $this->alt($alt);
@@ -21,7 +21,7 @@ class Image extends Element {
             return $this->attr('alt');
         }
 
-        $this->attr(new Attribute\AlternateText($value));
+        $this->attr(new AlternateText($value));
 
         return $this;
     }
