@@ -2,11 +2,6 @@
 
 namespace Onimla\HTML;
 
-/*
-require_once 'Node.class.php';
-require_once 'BrazilTime.class.php';
-*/
-
 /**
  * @property Span $container
  */
@@ -68,11 +63,10 @@ class BrazilDateInterval extends Node {
         if ($this->container->length() < 1) {
             return (string) $this->prepare();
         }
-        
+
         return (string) parent::__toString();
     }
 
-    
     public function prepare() {
         self::log('Preparando os elementos filhos.', TRUE);
 
@@ -80,7 +74,7 @@ class BrazilDateInterval extends Node {
 
         self::log('$ini = ' . var_export($this->ini->format(DATE_W3C), TRUE));
         $ini = new BrazilTime($this->ini->format(DATE_W3C));
-        
+
         self::log('$end = ' . var_export($this->end->format(DATE_W3C), TRUE));
         $end = new BrazilTime($this->end->format(DATE_W3C));
         self::log('Criou os elementos filhos.');
@@ -364,7 +358,6 @@ class BrazilDateInterval extends Node {
         );
 
         if (!isset($this->container)) {
-            require_once 'Span.class.php';
             $this->container = new Span(FALSE, $classes);
         }
 
