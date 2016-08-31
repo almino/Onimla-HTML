@@ -200,15 +200,9 @@ class Node implements Countable, IteratorAggregate, Serializable {
         # Reduz todos os elementos passados para a função a um array de uma dimensão
         $children = self::arrayFlatten(func_get_args());
 
-        # Se não temos filhos
-        if (count($this->children) < 1) {
-            # Basta adicionar
-            $this->addChildren(...$children);
-        } else {
-            # Coloca o parâmetro no início do array
-            array_unshift($this->children, ...$children);
-            # !!! Não precisa reatribuir $this->children
-        }
+        # Coloca o parâmetro no início do array
+        array_unshift($this->children, ...$children);
+        # !!! Não precisa reatribuir $this->children
     }
 
     public function prepend($children) {
