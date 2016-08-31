@@ -201,7 +201,7 @@ class Node implements Countable, IteratorAggregate, Serializable {
         $children = self::arrayFlatten(func_get_args());
 
         # Se não temos filhos
-        if ($this->length() < 1) {
+        if (count($this->children) < 1) {
             # Basta adicionar
             $this->addChildren(...$children);
         } else {
