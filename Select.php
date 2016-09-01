@@ -138,10 +138,10 @@ class Select extends Element implements UserInput {
             $found = $this->findByAttr('selected', 'selected');
 
             if (is_object($found) AND method_exists($found, 'attr')) {
-                return $found->attr('value') === FALSE ? $found->text() : $found->attr('value')->getValue();
+                return $found->attr('value') === FALSE ? $found->text() : $found->attr('value');
             }
 
-            return $this;
+            return FALSE;
         }
 
         foreach ($this->getChildren() as $option) {
