@@ -215,6 +215,17 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this;
     }
 
+    public function hasAttr($name) {
+        return $this->hasAttribute($name);
+    }
+
+    public function hasAttribute($name) {
+        # Garantindo que o nome não tenha caracteres especiais
+        $name = Attribute::name($name);
+
+        return key_exists($name, $this->attr) AND $this->attr[$name] instanceof Attribute;
+    }
+
     public final function &findByAttr($attr, $value) {
         $result = FALSE;
 

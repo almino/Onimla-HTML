@@ -2,7 +2,9 @@
 
 namespace Onimla\HTML;
 
-class Select extends Element {
+use Onimla\HTML\Polymorphism\UserInput;
+
+class Select extends Element implements UserInput {
 
     use Traits\Name;
 
@@ -63,6 +65,66 @@ class Select extends Element {
         }
 
         return $this;
+    }
+
+    public function isDisabled() {
+        return $this->hasAttribute(Constant::DISABLED);
+    }
+
+    public function isNotReadOnly() {
+        return !$this->hasAttribute(Constant::READONLY);
+    }
+
+    public function isNotRequired() {
+        return !$this->hasAttribute(Constant::REQUIRED);
+    }
+
+    public function isReadOnly() {
+        return $this->hasAttribute(Constant::READONLY);
+    }
+
+    public function isRequired() {
+        return $this->hasAttribute(Constant::REQUIRED);
+    }
+
+    public function isValueSet() {
+        return count($this->findByAttr(Constant::SELECTED, Constant::SELECTED)) > 0;
+    }
+
+    public function readOnly() {
+        return $this->readOnly();
+    }
+
+    public function setDisabled() {
+        $this->setAttributeValue(Constant::DISABLED, Constant::DISABLED, 'none');
+    }
+
+    public function setReadOnly() {
+        $this->setAttributeValue(Constant::READONLY, Constant::READONLY, 'none');
+    }
+
+    public function setRequired() {
+        $this->setAttributeValue(Constant::REQUIRED, Constant::REQUIRED, 'none');
+    }
+
+    public function type($value = FALSE) {
+        if ($value === FALSE) {
+            return $this->name;
+        }
+        
+        return $this;
+    }
+
+    public function unsetDisabled() {
+        $this->removeAttr(Constant::DISABLED);
+    }
+
+    public function unsetReadOnly() {
+        $this->removeAttr(Constant::READONLY);
+    }
+
+    public function unsetRequired() {
+        $this->removeAttr(Constant::REQUIRED);
     }
 
     /**
