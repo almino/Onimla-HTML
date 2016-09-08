@@ -71,7 +71,7 @@ class Option extends Element {
         return $this->attr(__FUNCTION__, $value);
     }
 
-    public function create($array, $ignoreIndexes = TRUE) {
+    public static function create($array, $ignoreIndexes = TRUE) {
         $result = new Node();
 
         foreach ($array as $value => $text) {
@@ -81,7 +81,7 @@ class Option extends Element {
                 $option->attr('value', $value);
             }
 
-            $result->$value = $text;
+            $result->$value = $option;
         }
 
         return $result;
