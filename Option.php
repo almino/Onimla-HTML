@@ -3,8 +3,8 @@
 namespace Onimla\HTML;
 
 /*
-require_once 'Element.class.php';
-require_once 'Select.class.php';
+  require_once 'Element.class.php';
+  require_once 'Select.class.php';
  */
 
 class Option extends Element {
@@ -30,7 +30,7 @@ class Option extends Element {
     public function disabled() {
         return (bool) $this->attr('disabled');
     }
-    
+
     public function label($text = FALSE) {
         return $this->attr('label', $text, 'encode');
     }
@@ -50,7 +50,7 @@ class Option extends Element {
     public function selected() {
         return $this->attr('selected');
     }
-    
+
     /**
      * Unset the attribute <code>selected</code> (set to <code>fale</code>)
      * @return Option
@@ -62,13 +62,29 @@ class Option extends Element {
     public function deselected() {
         return (bool) !$this->attr('selected');
     }
-    
+
     public function value($value = FALSE) {
         if (strlen($value) < 1) {
             return $this->attr(__FUNCTION__);
         }
-        
+
         return $this->attr(__FUNCTION__, $value);
+    }
+
+    public function create($array, $ignoreIndexes = TRUE) {
+        $result = new Node();
+
+        foreach ($array as $value => $text) {
+            $option = $text instanceof Element ? $text : new self(FALSE, $text);
+
+            if (!$ignoreIndexes) {
+                $option->attr('value', $value);
+            }
+
+            $result->$value = $text;
+        }
+
+        return $result;
     }
 
 }
