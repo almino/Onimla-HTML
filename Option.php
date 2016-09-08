@@ -72,7 +72,7 @@ class Option extends Element {
     }
 
     public static function create($array, $ignoreIndexes = TRUE) {
-        $result = new Node();
+        $result = new Node;
 
         foreach ($array as $value => $text) {
             $option = $text instanceof Element ? $text : new self(FALSE, $text);
