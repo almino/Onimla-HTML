@@ -44,7 +44,7 @@ class Input extends Element implements userInput {
     public function isAutoFocus() {
         return $this->attr('autofocus');
     }
-    
+
     public function autofocus() {
         return $this->isAutoFocus();
     }
@@ -56,7 +56,7 @@ class Input extends Element implements userInput {
     public function unsetDisabled() {
         $this->removeAttr('disabled');
     }
-    
+
     public function isDisabled() {
         return $this->attr('autofocus');
     }
@@ -170,7 +170,13 @@ class Input extends Element implements userInput {
     }
 
     public function isValueSet() {
-        return $this->getAttribute('value')->isValueSet();
+        $value = $this->getAttribute('value');
+
+        if ($value === FALSE) {
+            return FALSE;
+        }
+        
+        return $value->isValueSet();
     }
 
 }
