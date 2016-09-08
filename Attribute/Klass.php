@@ -40,25 +40,25 @@ class Klass extends \Onimla\HTML\Attribute {
     }
 
     public function prepValue($value) {
-        $values = \Onimla\HTML\Node::arrayFlatten(func_get_args());
+        $values = Node::arrayFlatten(func_get_args());
 
         array_walk($values, function(&$val) {
             $val = explode(' ', $val);
             return $val;
         });
 
-        return array_filter(\Onimla\HTML\Node::arrayFlatten($values), 'strlen');
+        return array_filter(Node::arrayFlatten($values), 'strlen');
     }
 
     public static function outputValue($value) {
         # Pega todos os parâmetros
-        $values = \Onimla\HTML\Node::arrayFlatten(func_get_args());
+        $values = Node::arrayFlatten(func_get_args());
         # Tranforma strings com espaços em vetores
         array_walk($values, function(&$param) {
             $param = explode(' ', $param);
         });
         # Remove o que não nos intressa (vazio)
-        $values = array_filter(\Onimla\HTML\Node::arrayFlatten($values), 'strlen');
+        $values = array_filter(Node::arrayFlatten($values), 'strlen');
         # Aplica a função que torna o valor apto para cada um dos parâmetros
         return implode(' ', array_map(array(__CLASS__, 'safeValue'), $values));
     }
@@ -74,11 +74,7 @@ class Klass extends \Onimla\HTML\Attribute {
     }
 
     public function setValue($value) {
-        if (is_array($value)) {
-            $this->value = $value;
-        } else {
-            $this->value = array($value);
-        }
+        $this->value = Node::arrayFlatten(func_get_args());
     }
 
     public function addValue($value) {
@@ -236,10 +232,10 @@ class Klass extends \Onimla\HTML\Attribute {
      * @return \Onimla\HTML\Attribute\Klass
      */
     public function strictRemoveClass($class) {
-        $remove = call_user_func_array(array(__CLASS__, 'outputValue'), func_get_args());
+        $remove = self::outputValue(...func_get_args());
         $current = $this->getValue();
 
-        if (strlen($remove) > 0 AND is_int(strstr($current, $remove))) {
+        if (strlen($remove) > 0 AND is_int(strpos($current, $remove))) {
             $this->setValue(explode(' ', preg_replace("/{$remove}/", '', $current)));
         }
 
