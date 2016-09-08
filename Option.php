@@ -78,7 +78,7 @@ class Option extends Element {
             $option = $text instanceof Element ? $text : new self(FALSE, $text);
 
             if (!$ignoreIndexes) {
-                $option->attr('value', $value);
+                $option->setAttributeValue('value', $value);
             }
 
             $result->$value = $option;
