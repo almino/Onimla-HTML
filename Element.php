@@ -838,7 +838,7 @@ class Element extends Node implements HasAttribute, Appendable {
         }
 
         self::log('About to return text.');
-        return ($this->length() > 0) ? strip_tags($this->__toString()) : '';
+        return ($this->length() > 0) ? html_entity_decode(strip_tags($this->__toString())) : '';
     }
 
     public function ucfirst() {
