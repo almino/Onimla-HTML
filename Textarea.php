@@ -65,7 +65,7 @@ class Textarea extends Element implements UserInput {
     }
 
     public function isValueSet() {
-        return $this->getAttribute('value')->isValueSet();
+        return strlen($this->text()) > 0;
     }
 
     public function readOnly() {
