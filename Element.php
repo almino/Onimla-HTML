@@ -109,12 +109,17 @@ class Element extends Node implements HasAttribute, Appendable {
 
     public function setParent($parent) {
         self::log('Setting parent for ' . get_class($this), TRUE);
-        self::log("Parent for `{$this->name}{$this->selector()}` is `{$parent->name}{$parent->selector()}`");
+        if (method_exists($parent, 'path')) {
+            self::log("Parent for `{$this->name}{$this->selector()}` is `{$parent->path()}`");
+        }
 
         $this->parent = $parent;
 
-        self::log("Parent is {$parent->path()}");
-        self::log("Child is {$this->path()}");
+
+        if (method_exists($parent, 'path')) {
+            self::log("Parent is {$parent->path()}");
+            self::log("Child is {$this->path()}");
+        }
 
         return $this;
     }
