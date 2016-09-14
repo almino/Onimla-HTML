@@ -58,6 +58,14 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this->open() . $this->inner() . $this->close();
     }
 
+    public function __set($name, $value) {
+        if (is_object($value) AND method_exists($value, 'setParent')) {
+            $value->setParent($this);
+        }
+
+        parent::__set($name, $value);
+    }
+
     public function __clone() {
         $this->parent = is_object($this->parent) ? clone $this->parent : $this->parent;
 
@@ -114,7 +122,6 @@ class Element extends Node implements HasAttribute, Appendable {
         }
 
         $this->parent = $parent;
-
 
         if (method_exists($parent, 'path')) {
             self::log("Parent is {$parent->path()}");
