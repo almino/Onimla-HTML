@@ -9,6 +9,8 @@ namespace Onimla\HTML;
  */
 class Element extends Node implements HasAttribute, Appendable {
 
+    use Traits\MagicSetParent;
+
     private $parent = FALSE;
 
     /**
@@ -56,14 +58,6 @@ class Element extends Node implements HasAttribute, Appendable {
 
     public function __toString() {
         return $this->open() . $this->inner() . $this->close();
-    }
-
-    public function __set($name, $value) {
-        if (is_object($value) AND method_exists($value, 'setParent')) {
-            $value->setParent($this);
-        }
-
-        parent::__set($name, $value);
     }
 
     public function __clone() {
