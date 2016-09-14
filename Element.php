@@ -9,8 +9,6 @@ namespace Onimla\HTML;
  */
 class Element extends Node implements HasAttribute, Appendable {
 
-    use Traits\MagicSetParent;
-
     private $parent = FALSE;
 
     /**
