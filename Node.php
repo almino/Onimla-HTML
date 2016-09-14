@@ -156,7 +156,9 @@ class Node implements Countable, IteratorAggregate, Serializable {
                 $arrayOrInstance = $arrayOrInstance->getChildren();
             }
 
-            call_user_func_array(array($this, 'append'), $arrayOrInstance);
+            if (count($arrayOrInstance) > 0) {
+                call_user_func_array(array($this, 'append'), $arrayOrInstance);
+            }
         }
     }
 
