@@ -67,6 +67,10 @@ class BrazilDateInterval extends Node {
         return (string) parent::__toString();
     }
 
+    public function path() {
+        return $this->container->path();
+    }
+
     public function prepare() {
         self::log('Preparando os elementos filhos.', TRUE);
 
@@ -388,7 +392,7 @@ class BrazilDateInterval extends Node {
         $span->data('value', $datetime->format(self::MACHINE_DATE));
 
         if ($format == 'date_short') {
-            $span->title($this->spanDate($datetime, 'date_long')->text(), 'none');
+            $span->title($this->spanDate($datetime, 'date_long')->text());
         }
 
         return $span;

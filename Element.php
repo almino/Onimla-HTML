@@ -994,6 +994,8 @@ class Element extends Node implements HasAttribute, Appendable {
 
         if ($parent !== FALSE AND is_callable(array($parent, 'path'))) {
             $parent = $parent->path() . ' > ';
+        } else {
+            $parent = NULL;
         }
 
         $result = $parent . $this->name;
