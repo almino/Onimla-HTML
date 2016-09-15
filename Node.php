@@ -76,10 +76,6 @@ class Node implements Countable, IteratorAggregate, Serializable {
     }
 
     public function __set($name, $value) {
-        if (is_object($value) AND method_exists($value, 'setParent')) {
-            $value->setParent($this);
-        }
-
         self::log("Using magical method to SET a child named `{$name}`.", TRUE);
         $this->children[$name] = $value;
     }
