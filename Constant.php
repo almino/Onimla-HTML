@@ -9,5 +9,6 @@ abstract class Constant {
     const REQUIRED = 'required';
     const READONLY = 'readonly';
     const SELECTED = 'selected';
+    const DOWNLOAD = 'download';
 
 }

@@ -2,13 +2,15 @@
 
 namespace Onimla\HTML\Traits;
 
-trait Href {
+trait Href
+{
 
     /**
      * @param string $url
      * @return self
      */
-    public function href($url = FALSE) {
+    public function href($url = FALSE)
+    {
         return $this->attr(__FUNCTION__, $url);
     }
 

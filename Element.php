@@ -530,7 +530,7 @@ class Element extends Node implements HasAttribute, Appendable {
         return $this->attr('style', $params);
     }
 
-    function title($text = FALSE) {
+    public function title($text = FALSE) {
         if ($text === FALSE) {
             return $this->attr(__FUNCTION__);
         }
