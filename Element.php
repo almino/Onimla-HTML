@@ -429,7 +429,7 @@ class Element extends Node implements HasAttribute, Appendable {
      * @return boolean
      */
     public function hasClass($class) {
-        return $this->getClassAttribute()->matchValue($class);
+        return $this->getClassAttribute()->matchValue(Attribute\Klass::outputValue(...func_get_args()));
     }
 
     public function aria($property, $value = FALSE, $convert = 'encode') {
