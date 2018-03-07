@@ -9,7 +9,7 @@ use Onimla\HTML\Node;
  *
  * @author AlminoMelo at gmail.com
  */
-class Klass extends \Onimla\HTML\Attribute {
+class Klass extends \Onimla\HTML\Attribute implements \Countable {
 
     protected $value = array();
 
@@ -27,6 +27,10 @@ class Klass extends \Onimla\HTML\Attribute {
         }
 
         return parent::__toString();
+    }
+
+    public function count() {
+        return count($this->value);
     }
 
     public function selector() {
